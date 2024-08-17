@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Login {
+  id         Int      @id @default(autoincrement())
+  dni        String   @unique
+  correo     String   @unique
+  nombre     String
+  pass       String
+  Form       Form[]   // No necesitas especificar `onDelete` aquí
+}
+
+model Form {
+  id        Int    @id @default(autoincrement())
+  dni_ref   String
+  nombre    String
+  cuil      String
+  json_dni  Json
+  id_login  Int
+  documento String
+  login     Login   @relation(fields: [id_login], references: [id], onDelete: Cascade) // Especificar `onDelete` aquí
+
+  @@index([id_login])
+}

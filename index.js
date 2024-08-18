@@ -7,6 +7,6 @@ app.use(express.json());
 // Usar las rutas
 app.use('/api', routes);
 
-app.listen(3000, () => {
-  console.log('Servidor corriendo en el puerto 3000');
+app.listen(8080, () => {
+  console.log('Servidor corriendo en el puerto 8080');
 });

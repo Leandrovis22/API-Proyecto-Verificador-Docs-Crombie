@@ -4,4 +4,4 @@ npx prisma generate
 
 nodemon index.js
 
-instalar extension thunderclient e importar los requests "thunder-collection_Crombie-api", probar los request.
+instalar postman e importar los requests "API CROMBIE.postman_collection", probar los request.

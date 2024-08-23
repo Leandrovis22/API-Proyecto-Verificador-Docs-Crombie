@@ -7,24 +7,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Login {
-  id         Int      @id @default(autoincrement())
-  dni        String   @unique
-  correo     String   @unique
-  nombre     String
-  pass       String
-  Form       Form[]   // No necesitas especificar `onDelete` aquí
+model usuario {
+  id               Int    @id @default(autoincrement())
+  nombre           String
+  dni              BigInt @unique
+  cuil             String
+  correo           String @unique
+  password         String
+  telefono         BigInt
+  fecha_nacimiento String
+  dni_foto_delante String
+  dni_foto_detras  String
+
+  dniform dniform[]
 }
 
-model Form {
-  id        Int    @id @default(autoincrement())
-  dni_ref   String
-  nombre    String
-  cuil      String
-  json_dni  Json
-  id_login  Int
-  documento String
-  login     Login   @relation(fields: [id_login], references: [id], onDelete: Cascade) // Especificar `onDelete` aquí
+model dniform {
+  id               Int    @id @default(autoincrement())
+  dni_form         BigInt
+  cuil             String
+  nombre           String
+  fecha_nacimiento String
+  dni_foto_delante String
+  dni_foto_detras  String
+  correo           String
+  id_usuario       Int
 
-  @@index([id_login])
+  usuario usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 }

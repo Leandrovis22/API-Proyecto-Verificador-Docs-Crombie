@@ -34,8 +34,18 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "nombre",
+							"value": "Leandro Ezequiel Viscolungo",
+							"type": "text"
+						},
+						{
 							"key": "dni",
 							"value": "42612132",
+							"type": "text"
+						},
+						{
+							"key": "cuil",
+							"value": "20-42612132-9",
 							"type": "text"
 						},
 						{
@@ -44,18 +54,8 @@
 							"type": "text"
 						},
 						{
-							"key": "nombre",
-							"value": "Leandro Ezequiel Viscolungo",
-							"type": "text"
-						},
-						{
 							"key": "password",
 							"value": "1234",
-							"type": "text"
-						},
-						{
-							"key": "cuil",
-							"value": "20-42612132-9",
 							"type": "text"
 						},
 						{
@@ -101,7 +101,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"dni\":\"12345678\",\r\n    \"password\":\"1234\"\r\n}",
+					"raw": "{\r\n    \"dni\":\"42612132\",\r\n    \"password\":\"1234\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -123,6 +123,65 @@
 			"response": []
 		},
 		{
+			"name": "get user data",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ1NDY1MjksImV4cCI6MTcyNDU0ODMyOX0.of3H229VmRbnzTK6Pub6r7jKv8GfZW4j34dZIIcIwx4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user images url",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ1NDY1MjksImV4cCI6MTcyNDU0ODMyOX0.of3H229VmRbnzTK6Pub6r7jKv8GfZW4j34dZIIcIwx4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/user/dni-images",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user",
+						"dni-images"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "update user",
 			"request": {
 				"auth": {
@@ -130,7 +189,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQyMTI5NzIsImV4cCI6MTcyNDIxNDc3Mn0.8Vatz2k0e-qYh6CEVmuKllZ8QeyLISbI59Wjqf1Hu_Y",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ1NDY1MjksImV4cCI6MTcyNDU0ODMyOX0.of3H229VmRbnzTK6Pub6r7jKv8GfZW4j34dZIIcIwx4",
 							"type": "string"
 						}
 					]
@@ -167,7 +226,7 @@
 						},
 						{
 							"key": "telefono",
-							"value": "123123456",
+							"value": "123456789",
 							"type": "text"
 						},
 						{
@@ -178,12 +237,12 @@
 						{
 							"key": "dni_foto_delante",
 							"type": "file",
-							"src": "/C:/Users/leand/Downloads/CV Leandro Viscolungo (1).pdf"
+							"src": "/C:/Users/leand/Downloads/CV Leandro Viscolungo.png"
 						},
 						{
 							"key": "dni_foto_detras",
 							"type": "file",
-							"src": "/C:/Users/leand/Downloads/CV Leandro Viscolungo (1).pdf"
+							"src": "/C:/Users/leand/Downloads/CV Leandro Viscolungo.png"
 						}
 					]
 				},
@@ -209,7 +268,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQyMTI5NzIsImV4cCI6MTcyNDIxNDc3Mn0.8Vatz2k0e-qYh6CEVmuKllZ8QeyLISbI59Wjqf1Hu_Y",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ1NDY1MjksImV4cCI6MTcyNDU0ODMyOX0.of3H229VmRbnzTK6Pub6r7jKv8GfZW4j34dZIIcIwx4",
 							"type": "string"
 						}
 					]

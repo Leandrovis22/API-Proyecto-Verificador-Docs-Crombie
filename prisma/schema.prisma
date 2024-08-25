@@ -8,30 +8,18 @@ datasource db {
 }
 
 model usuario {
-  id               Int    @id @default(autoincrement())
+  id               Int     @id @default(autoincrement())
   nombre           String
-  dni              BigInt @unique
+  dni              BigInt  @unique
   cuil             String
-  correo           String @unique
+  correo           String  @unique
   password         String
   telefono         BigInt
   fecha_nacimiento String
   dni_foto_delante String
   dni_foto_detras  String
-
-  dniform dniform[]
+  textextract      Json  
+  verificacion_log Json
 }
 
-model dniform {
-  id               Int    @id @default(autoincrement())
-  dni_form         BigInt
-  cuil             String
-  nombre           String
-  fecha_nacimiento String
-  dni_foto_delante String
-  dni_foto_detras  String
-  correo           String
-  id_usuario       Int
-
-  usuario usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
-}
+// Eliminamos el modelo dniform

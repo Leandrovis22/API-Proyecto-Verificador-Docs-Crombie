@@ -19,9 +19,9 @@ const s3Client = new S3Client({
 });
 
 // Función para subir un archivo a S3
-const uploadToS3 = async (file, folder, dni) => {
-  const fileExtension = path.extname(file.originalname); // Obtener la extensión del archivo
-  const fileName = `${dni}-${Date.now()}${fileExtension}`; // Nombre único para el archivo
+const uploadToS3 = async (file, dni) => {
+  const fileExtension = path.extname(file.originalname);
+  const fileName = `${dni}-${Date.now()}${fileExtension}`;
   const uploadParams = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
@@ -88,12 +88,12 @@ exports.register = async (req, res) => {
       if (req.files) {
         if (req.files['dni_foto_delante'] && req.files['dni_foto_delante'][0]) {
           const file = req.files['dni_foto_delante'][0];
-          dniFotoDelanteFileName = await uploadToS3(file, 'dni_foto_delante', dniInt);
+          dniFotoDelanteFileName = await uploadToS3(file, dniInt);
         }
 
         if (req.files['dni_foto_detras'] && req.files['dni_foto_detras'][0]) {
           const file = req.files['dni_foto_detras'][0];
-          dniFotoDetrasFileName = await uploadToS3(file, 'dni_foto_detras', dniInt);
+          dniFotoDetrasFileName = await uploadToS3(file, dniInt);
         }
       }
     } catch (uploadErr) {
@@ -113,7 +113,9 @@ exports.register = async (req, res) => {
           telefono: telefonoInt,
           fecha_nacimiento,
           dni_foto_delante: dniFotoDelanteFileName,
-          dni_foto_detras: dniFotoDetrasFileName
+          dni_foto_detras: dniFotoDetrasFileName,
+          textextract: {},  // Campo textextract vacío
+          verificacion_log: {}  // Campo verificacion_log vacío, reservado para uso futuro
         }
       });
 
@@ -126,11 +128,14 @@ exports.register = async (req, res) => {
 
       res.status(201).json({ message: 'Registro exitoso', token });
     } catch (dbErr) {
+      console.error('Error al crear el usuario:', dbErr);
       res.status(500).json({ error: 'Error al crear el usuario' });
     }
+
   });
 };
 
+// Controlador para el login
 exports.login = async (req, res) => {
   const { dni, password } = req.body;
 
@@ -157,7 +162,6 @@ exports.login = async (req, res) => {
       { expiresIn: '30m' }
     );
 
-    // Respuesta con los datos del usuario y el token
     res.json({
       message: 'Login exitoso',
       token: token
@@ -168,6 +172,88 @@ exports.login = async (req, res) => {
   }
 };
 
+// Controlador para obtener los datos de un usuario específico
+exports.getUser = async (req, res) => {
+  const userId = req.user.id;  // El ID del usuario se obtiene del token de autenticación
+
+  try {
+    // Buscar el usuario en la base de datos por su ID
+    const user = await prismaClient.usuario.findUnique({
+      where: { id: parseInt(userId) }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Serializar los valores de BigInt como strings
+    const replacer = (key, value) => {
+      if (typeof value === 'bigint') {
+        return value.toString();
+      }
+      return value;
+    };
+
+    // Convertir el usuario en un objeto JSON, serializando los BigInt como strings
+    const userJson = JSON.parse(JSON.stringify(user, replacer));
+
+    res.json(userJson);
+  } catch (error) {
+    console.error('Error al obtener los datos del usuario:', error);
+    res.status(500).json({ error: 'Error al obtener los datos del usuario' });
+  }
+};
+
+const { GetObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+
+exports.getDniImages = async (req, res) => {
+  const userId = req.user.id; // Asume que el ID del usuario está en el token JWT
+
+  try {
+    // Buscar el usuario por ID
+    const user = await prismaClient.usuario.findUnique({
+      where: { id: parseInt(userId) }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Verificar si existen las imágenes
+    if (!user.dni_foto_delante && !user.dni_foto_detras) {
+      return res.status(404).json({ error: 'Imágenes del DNI no encontradas' });
+    }
+
+    // Crear las URLs firmadas para las imágenes
+    const urls = {};
+
+    if (user.dni_foto_delante) {
+      const commandDelante = new GetObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: user.dni_foto_delante,
+      });
+      const signedUrlDelante = await getSignedUrl(s3Client, commandDelante, { expiresIn: 3600 });
+      urls.dni_foto_delante = signedUrlDelante;
+    }
+
+    if (user.dni_foto_detras) {
+      const commandDetras = new GetObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: user.dni_foto_detras,
+      });
+      const signedUrlDetras = await getSignedUrl(s3Client, commandDetras, { expiresIn: 3600 });
+      urls.dni_foto_detras = signedUrlDetras;
+    }
+
+    res.json(urls);
+  } catch (error) {
+    console.error('Error al obtener las imágenes del DNI:', error);
+    res.status(500).json({ error: 'Error al obtener las imágenes del DNI' });
+  }
+};
+
+// Controlador para actualizar usuario
 exports.updateUser = [
   upload.fields([
     { name: 'dni_foto_delante', maxCount: 1 },
@@ -175,7 +261,7 @@ exports.updateUser = [
   ]),
   async (req, res) => {
     const { nombre, dni, cuil, correo, telefono, fecha_nacimiento } = req.body;
-    const userId = req.user.id;  // Obtener el id del usuario autenticado del token JWT
+    const userId = req.user.id;
     const files = req.files;
 
     try {
@@ -188,14 +274,31 @@ exports.updateUser = [
         return res.status(404).json({ error: 'Usuario no encontrado' });
       }
 
-      // Verificar si el nuevo DNI ya está registrado
+      // Verificar si el nuevo DNI ya está registrado en otro usuario
       if (dni && parseInt(dni) !== user.dni) {
-        const existingUserWithDni = await prismaClient.usuario.findUnique({
-          where: { dni: parseInt(dni) }
+        const existingUserWithDni = await prismaClient.usuario.findFirst({
+          where: {
+            dni: parseInt(dni),
+            id: { not: parseInt(userId) }
+          }
         });
 
         if (existingUserWithDni) {
-          return res.status(400).json({ error: 'El DNI ya está registrado' });
+          return res.status(400).json({ error: 'El DNI ya está registrado en otro usuario' });
+        }
+      }
+
+      // Verificar si el nuevo correo ya está registrado en otro usuario
+      if (correo && correo !== user.correo) {
+        const existingUserWithEmail = await prismaClient.usuario.findFirst({
+          where: {
+            correo: correo,
+            id: { not: parseInt(userId) }
+          }
+        });
+
+        if (existingUserWithEmail) {
+          return res.status(400).json({ error: 'El correo ya está registrado en otro usuario' });
         }
       }
 
@@ -204,26 +307,24 @@ exports.updateUser = [
       let dniFotoDetrasFileName = user.dni_foto_detras;
 
       if (files) {
-        console.log('Archivos recibidos:', files);
+        //console.log('Archivos recibidos:', files);
 
         if (files['dni_foto_delante'] && files['dni_foto_delante'][0]) {
-          // Eliminar la foto antigua
           if (dniFotoDelanteFileName) {
             await deleteFiles([dniFotoDelanteFileName]);
           }
 
           const file = files['dni_foto_delante'][0];
-          dniFotoDelanteFileName = await uploadToS3(file, 'dni_foto_delante', dni);
+          dniFotoDelanteFileName = await uploadToS3(file, dni);
         }
 
         if (files['dni_foto_detras'] && files['dni_foto_detras'][0]) {
-          // Eliminar la foto antigua
           if (dniFotoDetrasFileName) {
             await deleteFiles([dniFotoDetrasFileName]);
           }
 
           const file = files['dni_foto_detras'][0];
-          dniFotoDetrasFileName = await uploadToS3(file, 'dni_foto_detras', dni);
+          dniFotoDetrasFileName = await uploadToS3(file, dni);
         }
       }
 
@@ -238,24 +339,19 @@ exports.updateUser = [
           telefono: telefono ? parseInt(telefono) : user.telefono,
           fecha_nacimiento: fecha_nacimiento || user.fecha_nacimiento,
           dni_foto_delante: dniFotoDelanteFileName,
-          dni_foto_detras: dniFotoDetrasFileName
+          dni_foto_detras: dniFotoDetrasFileName,
+          verificacion_log: {}  // Campo verificacion_log vacío, reservado para uso futuro
         }
       });
 
-      const replacer = (key, value) => {
-        if (typeof value === 'bigint') {
-          return value.toString(); // Convertir BigInt a String
-        }
-        return value;
-      };
+      // Serializar BigInt como string
+      const replacer = (key, value) => (typeof value === 'bigint' ? value.toString() : value);
+      const updatedUserJson = JSON.parse(JSON.stringify(updatedUser, replacer));
 
-      // Serializar BigInt a String antes de enviar la respuesta
-      const responseData = JSON.stringify({
-        message: 'Usuario actualizado con éxito',
-        user: updatedUser
-      }, replacer);
-
-      res.json(JSON.parse(responseData));
+      res.json({
+        message: 'Usuario actualizado correctamente',
+        user: updatedUserJson
+      });
     } catch (error) {
       console.error('Error al actualizar el usuario:', error);
       res.status(500).json({ error: 'Error al actualizar el usuario' });
@@ -263,62 +359,62 @@ exports.updateUser = [
   }
 ];
 
+// Controlador para eliminar usuario
 exports.deleteUser = async (req, res) => {
-  const userId = req.user.id; // Extraído del token JWT
+  const userId = req.user.id;
 
   try {
-    // Verificar si el usuario existe
+    // Buscar el usuario existente
     const user = await prismaClient.usuario.findUnique({
-      where: { id: parseInt(userId) },
-      include: { dniform: true } // Incluye dniform para obtener los archivos
+      where: { id: parseInt(userId) }
     });
 
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    // Obtener los nombres de los archivos de S3
-    const fileNames = [
-      user.dni_foto_delante,
-      user.dni_foto_detras,
-      ...user.dniform.flatMap(form => [form.dni_foto_delante, form.dni_foto_detras])
-    ].filter(Boolean); // Filtrar valores nulos o indefinidos
+    // Eliminar las fotos del DNI del usuario
+    const filesToDelete = [];
+    if (user.dni_foto_delante) {
+      filesToDelete.push(user.dni_foto_delante);
+    }
+    if (user.dni_foto_detras) {
+      filesToDelete.push(user.dni_foto_detras);
+    }
+    if (filesToDelete.length > 0) {
+      await deleteFiles(filesToDelete);
+    }
 
-    // Eliminar todos los archivos asociados de S3
-    await deleteFiles(fileNames);
-
-    // Eliminar el usuario y sus dniform asociados
+    // Eliminar el usuario
     await prismaClient.usuario.delete({
       where: { id: parseInt(userId) }
     });
 
     res.json({ message: 'Usuario eliminado correctamente' });
   } catch (error) {
-    console.error('Error al eliminar usuario:', error);
-    res.status(500).json({ error: 'Error al eliminar usuario' });
+    console.error('Error al eliminar el usuario:', error);
+    res.status(500).json({ error: 'Error al eliminar el usuario' });
   }
 };
 
-// Controlador para obtener todos los usuarios y sus dniform asociados
+// Controlador para obtener todos los usuarios
 exports.getUsers = async (req, res) => {
   try {
-    const users = await prismaClient.usuario.findMany({
-      include: {
-        dniform: true, // Incluye dniform asociados a cada usuario
-      },
-    });
+    const users = await prismaClient.usuario.findMany();
 
-    // Función para reemplazar BigInt en JSON.stringify
+    // Serializar los valores de BigInt como strings
     const replacer = (key, value) => {
       if (typeof value === 'bigint') {
-        return value.toString(); // Convertir BigInt a String
+        return value.toString();
       }
       return value;
     };
 
-    res.status(200).json(JSON.parse(JSON.stringify(users, replacer)));
-  } catch (err) {
-    console.error('Error al obtener los usuarios:', err);
+    const usersJson = JSON.parse(JSON.stringify(users, replacer));
+
+    res.json(usersJson);
+  } catch (error) {
+    console.error('Error al obtener los usuarios:', error);
     res.status(500).json({ error: 'Error al obtener los usuarios' });
   }
 };

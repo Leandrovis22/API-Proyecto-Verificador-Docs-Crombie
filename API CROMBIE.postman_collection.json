@@ -71,12 +71,12 @@
 						{
 							"key": "dni_foto_delante",
 							"type": "file",
-							"src": "/C:/Users/leand/Downloads/dniperro.jpeg"
+							"src": "/C:/Users/leand/Downloads/dnileandrofrente.jpg"
 						},
 						{
 							"key": "dni_foto_detras",
 							"type": "file",
-							"src": "/C:/Users/leand/Downloads/dniperro.jpeg"
+							"src": "/C:/Users/leand/Downloads/dnileandrodetras.jpg"
 						}
 					]
 				},
@@ -130,7 +130,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ1NDY1MjksImV4cCI6MTcyNDU0ODMyOX0.of3H229VmRbnzTK6Pub6r7jKv8GfZW4j34dZIIcIwx4",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ2MzM5NTYsImV4cCI6MTcyNDYzNTc1Nn0.1Y0kNkewebCw6oqx_3rSSN_31QOH7p0cAv4glvzu-Fs",
 							"type": "string"
 						}
 					]
@@ -159,7 +159,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ1NDY1MjksImV4cCI6MTcyNDU0ODMyOX0.of3H229VmRbnzTK6Pub6r7jKv8GfZW4j34dZIIcIwx4",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ2MzM5NTYsImV4cCI6MTcyNDYzNTc1Nn0.1Y0kNkewebCw6oqx_3rSSN_31QOH7p0cAv4glvzu-Fs",
 							"type": "string"
 						}
 					]
@@ -268,7 +268,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ1NDY1MjksImV4cCI6MTcyNDU0ODMyOX0.of3H229VmRbnzTK6Pub6r7jKv8GfZW4j34dZIIcIwx4",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI1IiwiZG5pIjoiNDI2MTIxMzIiLCJpYXQiOjE3MjQ2MzQ2NjAsImV4cCI6MTcyNDYzNjQ2MH0.GHns8KJ1eyfJaUpWFAG-uA6JQFcq7us5ElvS9sHdMkg",
 							"type": "string"
 						}
 					]

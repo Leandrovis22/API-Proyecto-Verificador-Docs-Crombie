@@ -28,15 +28,30 @@ async function deleteFile(fileName) {
  * @param {string[]} fileNames - Nombres de los archivos a eliminar
  * @returns {Promise<void>}
  */
-async function deleteFiles(fileNames) {
+const deleteFiles = async (bucketName, fileNames) => {
+  if (!Array.isArray(fileNames)) {
+    throw new TypeError('fileNames debe ser un array');
+  }
+
+  const deletePromises = fileNames.map(async (fileName) => {
+    if (fileName) {
+      const params = { Bucket: bucketName, Key: fileName };
+      try {
+        await s3Client.send(new DeleteObjectCommand(params));
+        console.log(`Archivo ${fileName} eliminado con éxito de S3`);
+      } catch (err) {
+        console.error(`Error al eliminar el archivo ${fileName} de S3:`, err);
+      }
+    }
+  });
+
   try {
-    const deletePromises = fileNames.map(fileName => deleteFile(fileName));
     await Promise.all(deletePromises);
-  } catch (error) {
-    console.error('Error al eliminar archivos de S3:', error);
+  } catch (err) {
     throw new Error('Error al eliminar archivos de S3');
   }
-}
+};
+
 
 module.exports = {
   deleteFile,

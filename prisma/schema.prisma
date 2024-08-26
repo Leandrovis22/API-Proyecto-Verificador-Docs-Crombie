@@ -19,7 +19,6 @@ model usuario {
   dni_foto_delante String
   dni_foto_detras  String
   textextract      Json  
-  verificacion_log Json
 }
 
 // Eliminamos el modelo dniform

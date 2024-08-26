@@ -5,6 +5,8 @@ const multer = require('multer');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const path = require('path');
 const { deleteFiles } = require('../utils/s3Utils');
+const { analyzeImageWithTextract } = require('../utils/textractUtils');
+const { verificarDatos } = require('../utils/verificationUtils');
 
 // Configura Prisma
 const prismaClient = new PrismaClient();
@@ -41,9 +43,8 @@ const uploadToS3 = async (file, dni) => {
 // Configura Multer para manejar archivos en memoria
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Controlador para el registro
+
 exports.register = async (req, res) => {
-  // Manejo de archivos
   upload.fields([
     { name: 'dni_foto_delante', maxCount: 1 },
     { name: 'dni_foto_detras', maxCount: 1 }
@@ -52,7 +53,6 @@ exports.register = async (req, res) => {
       return res.status(500).json({ error: 'Error al procesar los archivos' });
     }
 
-    // Validaciones
     const { nombre, dni, cuil, correo, password, telefono, fecha_nacimiento } = req.body;
 
     if (!dni || !correo || !password) {
@@ -69,7 +69,6 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'Teléfono debe ser un número entero' });
     }
 
-    // Verificar si ya existe el DNI o el correo
     const existingUser = await prismaClient.usuario.findFirst({
       where: {
         OR: [{ dni: dniInt }, { correo }]
@@ -80,7 +79,6 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'El DNI o el correo ya están registrados' });
     }
 
-    // Subir las imágenes a S3
     let dniFotoDelanteFileName = null;
     let dniFotoDetrasFileName = null;
 
@@ -100,7 +98,35 @@ exports.register = async (req, res) => {
       return res.status(500).json({ error: 'Error al subir las imágenes a S3' });
     }
 
-    // Crear el usuario
+    let dniFotoDelanteText = '';
+    let dniFotoDetrasText = '';
+
+    try {
+      if (dniFotoDelanteFileName) {
+        dniFotoDelanteText = await analyzeImageWithTextract(process.env.AWS_BUCKET_NAME, dniFotoDelanteFileName);
+      }
+
+      if (dniFotoDetrasFileName) {
+        dniFotoDetrasText = await analyzeImageWithTextract(process.env.AWS_BUCKET_NAME, dniFotoDetrasFileName);
+      }
+    } catch (textractError) {
+      console.error('Error al procesar las imágenes con Textract:', textractError);
+      return res.status(500).json({ error: 'Error al procesar las imágenes con Textract' });
+    }
+
+    const verificationResult = await verificarDatos(
+      dniFotoDelanteText,
+      dniFotoDetrasText,
+      { nombre, dni, cuil, fecha_nacimiento }
+    );
+
+    if (!verificationResult.success) {
+      // Eliminar las imágenes subidas a S3 si falla la verificación, sin esperar a que termine la eliminación
+      deleteFiles(process.env.AWS_BUCKET_NAME, [dniFotoDelanteFileName, dniFotoDetrasFileName]);
+
+      return res.status(400).json({ error: verificationResult.error });
+    }
+
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await prismaClient.usuario.create({
@@ -114,12 +140,13 @@ exports.register = async (req, res) => {
           fecha_nacimiento,
           dni_foto_delante: dniFotoDelanteFileName,
           dni_foto_detras: dniFotoDetrasFileName,
-          textextract: {},  // Campo textextract vacío
-          verificacion_log: {}  // Campo verificacion_log vacío, reservado para uso futuro
+          textextract: {
+            frente: dniFotoDelanteText,
+            detras: dniFotoDetrasText,
+          }
         }
       });
 
-      // Crear token JWT
       const token = jwt.sign(
         { id: newUser.id.toString(), dni: newUser.dni.toString() },
         process.env.JWT_SECRET,
@@ -127,13 +154,13 @@ exports.register = async (req, res) => {
       );
 
       res.status(201).json({ message: 'Registro exitoso', token });
-    } catch (dbErr) {
-      console.error('Error al crear el usuario:', dbErr);
-      res.status(500).json({ error: 'Error al crear el usuario' });
+    } catch (creationError) {
+      console.error('Error al crear el usuario:', creationError);
+      return res.status(500).json({ error: 'Error al crear el usuario' });
     }
-
   });
 };
+
 
 // Controlador para el login
 exports.login = async (req, res) => {
@@ -339,8 +366,7 @@ exports.updateUser = [
           telefono: telefono ? parseInt(telefono) : user.telefono,
           fecha_nacimiento: fecha_nacimiento || user.fecha_nacimiento,
           dni_foto_delante: dniFotoDelanteFileName,
-          dni_foto_detras: dniFotoDetrasFileName,
-          verificacion_log: {}  // Campo verificacion_log vacío, reservado para uso futuro
+          dni_foto_detras: dniFotoDetrasFileName
         }
       });
 
@@ -381,8 +407,10 @@ exports.deleteUser = async (req, res) => {
     if (user.dni_foto_detras) {
       filesToDelete.push(user.dni_foto_detras);
     }
+
     if (filesToDelete.length > 0) {
-      await deleteFiles(filesToDelete);
+      const bucketName = process.env.AWS_BUCKET_NAME;
+      await deleteFiles(bucketName, filesToDelete);
     }
 
     // Eliminar el usuario
@@ -396,6 +424,7 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar el usuario' });
   }
 };
+
 
 // Controlador para obtener todos los usuarios
 exports.getUsers = async (req, res) => {

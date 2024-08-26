@@ -7,18 +7,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model usuario {
-  id               Int     @id @default(autoincrement())
+model Usuarios {
+  id               Int      @id @default(autoincrement())
   nombre           String
-  dni              BigInt  @unique
+  dni              BigInt   @unique
   cuil             String
-  correo           String  @unique
+  correo           String   @unique
   password         String
   telefono         BigInt
   fecha_nacimiento String
   dni_foto_delante String
   dni_foto_detras  String
-  textextract      Json  
+  textextract      Json
+  Tiqueteria       Tiqueteria[] // Relación uno a muchos con Tiqueteria
+}
+
+
+model Tiqueteria {
+  id             Int        @id @default(autoincrement())
+  usuario_id     Int
+  fecha_creacion DateTime   @default(now())
+  estado         String     @default("pendiente") @db.VarChar(50)
+  monto_prestamo Float
+  numero_ticket  Int
+  Usuarios       Usuarios   @relation(fields: [usuario_id], references: [id])
+  Personas       Personas[] // Relación uno a muchos con Personas
+
+  @@unique([usuario_id, numero_ticket])
+}
+
+model Personas {
+  id             Int        @id @default(autoincrement())
+  nombre         String     @db.VarChar(100)
+  apellido       String     @db.VarChar(100)
+  dni            BigInt     @unique
+  cuil           String     @db.VarChar(20)
+  fecha_nac      DateTime
+  foto_dni_frente String    @db.VarChar(255)
+  foto_dni_atras String     @db.VarChar(255)
+  tiqueteria_id  Int
+  Tiqueteria     Tiqueteria @relation(fields: [tiqueteria_id], references: [id])
 }
 
 // Eliminamos el modelo dniform

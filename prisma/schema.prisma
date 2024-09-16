@@ -3,22 +3,40 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
-model usuario {
-  id               Int     @id @default(autoincrement())
-  nombre           String
-  dni              BigInt  @unique
-  cuil             String
-  correo           String  @unique
-  password         String
-  telefono         BigInt
-  fecha_nacimiento String
-  dni_foto_delante String
-  dni_foto_detras  String
-  textextract      Json  
+model Usuario {
+  id             Int          @id @default(autoincrement())
+  nombre         String       
+  apellido       String       
+  dni            BigInt       @unique
+  cuil           BigInt       @unique
+  mail           String       @unique
+  password       String       
+  telefono       BigInt       
+  rol            String       @default("usuario")
+  createdAt      DateTime     @default(now()) 
+  Tiqueterias    Tiqueteria[]
 }
 
+model Tiqueteria {
+  id          Int        @id @default(autoincrement())  
+  usuarioId   Int        
+  fecha       DateTime   @default(now())  
+  estado      String     @default("pendiente")
+  monto       Float      @default(0.00)  
+  msqError    String?    
+  Usuario     Usuario    @relation(fields: [usuarioId], references: [id]) 
+  Dni         Dni?       
+}
+
+model Dni {
+  id            Int        @id @default(autoincrement())  
+  fotoFrente    String     
+  fotoDetras    String     
+  resTextract   Json       
+  tiqueteriaId  Int        @unique
+  Tiqueteria    Tiqueteria @relation(fields: [tiqueteriaId], references: [id]) 
+}
 // Eliminamos el modelo dniform

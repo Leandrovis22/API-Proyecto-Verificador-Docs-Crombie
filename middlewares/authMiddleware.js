@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
+const bcrypt = require('bcryptjs');
 
-const authenticateToken = (req, res, next) => {
+
+//controlar el Token
+exports.authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Se espera un formato 'Bearer <token>'
 
@@ -19,5 +22,7 @@ const authenticateToken = (req, res, next) => {
   });
   
 };
-
-module.exports = authenticateToken;
+//Hashear Contraseña
+exports.hashPassword = async(password)=>{
+  return password = await bcrypt.hash(password,10);
+}

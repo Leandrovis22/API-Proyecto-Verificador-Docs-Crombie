@@ -3,8 +3,8 @@ const app = express();
 const routes = require('./routes/routes');
 const authRouter = require('./routes/authRouter')
 
-app.use(express.json()); // Para analizar cuerpos JSON
-app.use(express.urlencoded({ extended: true })); // Para analizar cuerpos URL-encoded
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Usar las rutas
 app.use('/api', routes);

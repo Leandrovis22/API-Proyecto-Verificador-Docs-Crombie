@@ -1,61 +1,63 @@
-// /controller/dniController.js
-
 const { PrismaClient } = require('@prisma/client');
 const { analyzeImageWithTextract } = require('../utils/textractUtils');
 const { verificarDatos } = require('../utils/verificationUtils');
-const { uploadToS3 } = require('../utils/s3Utils'); // Suponiendo que tienes esta función en utils
+const { uploadToS3 } = require('../utils/s3Utils');
 const multer = require('multer');
-const Queue = require('bull'); // Ejemplo usando Bull para una cola de trabajo
+const Queue = require('bull');
 
 const prisma = new PrismaClient();
 const upload = multer({ storage: multer.memoryStorage() });
-const processingQueue = new Queue('dni-processing'); // Crear una cola para procesamiento de imágenes
+const processingQueue = new Queue('dni-processing');
 
-exports.processDNI = upload.fields([
+// Middleware para la subida de archivos
+const uploadMiddleware = upload.fields([
   { name: 'dni_foto_delante', maxCount: 1 },
   { name: 'dni_foto_detras', maxCount: 1 }
-])(async (req, res, next) => {
-  try {
-    // Obtener el ID del usuario del token
-    const userId = req.user.id;
+]);
 
-    // Buscar los datos del usuario en la base de datos
-    const usuario = await prisma.usuario.findUnique({
-      where: {
-        id: userId,
-      }
-    });
+exports.uploadMiddleware = uploadMiddleware;
 
-    if (!usuario) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+exports.processDNI = async (req, res) => {
+  uploadMiddleware(req, res, async (err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error en la carga de archivos' });
     }
 
-    // Crear el ticket en la tabla Tiqueteria
-    const ticket = await prisma.tiqueteria.create({
-      data: {
-        usuarioId: usuario.id,
-        estado: 'pendiente'
+    try {
+      const userId = req.user.id;
+
+      const usuario = await prisma.usuario.findUnique({
+        where: { id: userId }
+      });
+
+      if (!usuario) {
+        return res.status(404).json({ error: 'Usuario no encontrado' });
       }
-    });
 
-    // Enviar el trabajo a la cola para procesamiento
-    processingQueue.add({
-      ticketId: ticket.id,
-      userId: usuario.id,
-      files: req.files,
-      bucketName: process.env.AWS_BUCKET_NAME
-    });
+      const ticket = await prisma.tiqueteria.create({
+        data: {
+          usuarioId: usuario.id,
+          estado: 'pendiente'
+        }
+      });
 
-    // Responder inmediatamente
-    res.status(200).json({ message: 'Ticket creado y en proceso' });
+      processingQueue.add({
+        ticketId: ticket.id,
+        userId: usuario.id,
+        files: req.files,
+        bucketName: process.env.AWS_BUCKET_NAME
+      });
 
-  } catch (err) {
-    console.error('Error en el proceso:', err);
-    res.status(500).json({ error: 'Error en el proceso de creación del ticket' });
-  }
-});
+      res.status(200).json({ message: 'Ticket creado y en proceso' });
 
-// Trabajador de la cola para procesar imágenes y verificar datos
+    } catch (err) {
+      console.error('Error en el proceso:', err);
+      res.status(500).json({ error: 'Error en el proceso de creación del ticket' });
+    }
+  });
+};
+
+// Procesador de la cola
 processingQueue.process(async (job) => {
   const { ticketId, userId, files, bucketName } = job.data;
 
@@ -143,56 +145,3 @@ processingQueue.process(async (job) => {
     });
   }
 });
-
-
-
-
-
-const { GetObjectCommand } = require('@aws-sdk/client-s3');
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
-
-exports.getDniImages = async (req, res) => {
-  const userId = req.user.id; // Asume que el ID del usuario está en el token JWT
-
-  try {
-    // Buscar el usuario por ID
-    const user = await prismaClient.usuario.findUnique({
-      where: { id: parseInt(userId) }
-    });
-
-    if (!user) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    // Verificar si existen las imágenes
-    if (!user.dni_foto_delante && !user.dni_foto_detras) {
-      return res.status(404).json({ error: 'Imágenes del DNI no encontradas' });
-    }
-
-    // Crear las URLs firmadas para las imágenes
-    const urls = {};
-
-    if (user.dni_foto_delante) {
-      const commandDelante = new GetObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: user.dni_foto_delante,
-      });
-      const signedUrlDelante = await getSignedUrl(s3Client, commandDelante, { expiresIn: 3600 });
-      urls.dni_foto_delante = signedUrlDelante;
-    }
-
-    if (user.dni_foto_detras) {
-      const commandDetras = new GetObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: user.dni_foto_detras,
-      });
-      const signedUrlDetras = await getSignedUrl(s3Client, commandDetras, { expiresIn: 3600 });
-      urls.dni_foto_detras = signedUrlDetras;
-    }
-
-    res.json(urls);
-  } catch (error) {
-    console.error('Error al obtener las imágenes del DNI:', error);
-    res.status(500).json({ error: 'Error al obtener las imágenes del DNI' });
-  }
-};

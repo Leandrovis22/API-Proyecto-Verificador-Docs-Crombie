@@ -39,4 +39,3 @@ model Dni {
   tiqueteriaId  Int        @unique
   Tiqueteria    Tiqueteria @relation(fields: [tiqueteriaId], references: [id]) 
 }
-// Eliminamos el modelo dniform

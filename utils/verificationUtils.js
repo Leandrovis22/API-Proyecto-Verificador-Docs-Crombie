@@ -19,41 +19,6 @@ function normalizarDNI(dni) {
 }
 
 /**
- * Convierte una fecha en formato YYYY-MM-DD a (DD MMM YYYY).
- * @param {string} fecha - La fecha en formato YYYY-MM-DD.
- * @returns {string} La fecha en formato DD MMM YYYY.
- */
-function convertirFecha(fecha) {
-    const meses = [
-        'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'
-    ];
-    const [ano, mes, dia] = fecha.split('-');
-    return `${dia} ${meses[parseInt(mes, 10) - 1]} ${ano}`;
-}
-
-/**
- * Extrae todas las fechas de nacimiento posibles del texto extraído.
- * @param {string} texto - Texto del que se extraerán las fechas.
- * @returns {Array} Array de objetos con día, mes y año extraídos.
- */
-function extraerFechasNacimiento(texto) {
-    const fechas = [];
-    const fechaRegex = /(\d{2})\s([A-Z]{3})\/\s([A-Z]{3})\s(\d{4})/g;
-    let match;
-    
-    while ((match = fechaRegex.exec(texto)) !== null) {
-        const [_, dia, mesEspañol, mesIngles, ano] = match;
-        fechas.push({
-            dia,
-            mes: mesEspañol,
-            ano
-        });
-    }
-
-    return fechas;
-}
-
-/**
  * Compara los datos extraídos con los datos proporcionados en el request.
  * @param {string} frente - Texto extraído del frente del documento.
  * @param {string} detras - Texto extraído del dorso del documento.
@@ -65,7 +30,7 @@ function extraerFechasNacimiento(texto) {
  * @returns {object} Resultado de la verificación.
  */
 async function verificarDatos(frente, detras, requestData) {
-    const { nombre, dni, cuil, fecha_nacimiento } = requestData;
+    const { nombre, dni, cuil } = requestData;
 
     // Normalizar el DNI proporcionado
     const dniNormalizado = normalizarDNI(dni);
@@ -76,19 +41,6 @@ async function verificarDatos(frente, detras, requestData) {
     const dniEsValido = /^\d{8}$/.test(dniNormalizado);
     
     const cuilEsValido = /^\d{2}-\d{8}-\d{1}$/.test(cuil);
-
-    // Convertir fecha de nacimiento al formato del texto extraído
-    const fechaNacimientoFormato = convertirFecha(fecha_nacimiento);
-
-    // Extraer todas las fechas de nacimiento posibles del texto extraído
-    const fechasExtraidas = extraerFechasNacimiento(frente);
-
-    // Encontrar la fecha extraída que coincida con la proporcionada
-    const fechaNacimientoCoincide = fechasExtraidas.some(
-        fecha => fecha.dia === fechaNacimientoFormato.split(' ')[0] &&
-                 fecha.mes === fechaNacimientoFormato.split(' ')[1] &&
-                 fecha.ano === fechaNacimientoFormato.split(' ')[2]
-    );
 
     // Normalizar el nombre proporcionado en request
     const nombreNormalizado = normalizarCadena(nombre);
@@ -107,9 +59,6 @@ async function verificarDatos(frente, detras, requestData) {
     const segundoNombreCoincide = segundoNombre ? frenteNormalizado.includes(segundoNombre) : true;
     const apellidoCoincide = frenteNormalizado.includes(apellido);
 
-    //console.log(partesNombre, primerNombre, segundoNombre, apellido);
-    //console.log(primerNombreCoincide, segundoNombreCoincide, apellidoCoincide);
-
     // Comparar DNI
     const dniCoincide = dniEsValido && dniFrenteNormalizado.includes(dniNormalizado) && dniDetrasNormalizado.includes(dniNormalizado);
     const cuilCoincide = cuilEsValido && detras.includes(cuil);
@@ -123,7 +72,6 @@ async function verificarDatos(frente, detras, requestData) {
     if (!dniCoincide) errores.push('DNI');
     if (!cuilEsValido) errores.push('CUIL inválido');
     if (!cuilCoincide) errores.push('CUIL');
-    if (!fechaNacimientoCoincide) errores.push('fecha de nacimiento');
 
     if (errores.length === 0) {
         return { success: true };
@@ -136,7 +84,6 @@ async function verificarDatos(frente, detras, requestData) {
             'DNI': 'El DNI no coincide con el documento.',
             'CUIL inválido': 'El CUIL proporcionado es inválido.',
             'CUIL': 'El CUIL no coincide con el documento.',
-            'fecha de nacimiento': 'La fecha de nacimiento no coincide con el documento.',
         };
     
         const mensajes = errores.map(error => mensajesError[error]);
@@ -146,7 +93,6 @@ async function verificarDatos(frente, detras, requestData) {
             error: `Hubo problemas con los siguientes datos: ${mensajes.join(' ')}` 
         };
     }
-    
 }
 
 module.exports = {

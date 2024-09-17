@@ -1,3 +1,5 @@
+// /controllers/dniController.js
+
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -67,3 +69,54 @@ exports.processDNI = upload.fields([
     return res.status(500).json({ error: 'Error en el proceso de verificación' });
   }
 });
+
+
+
+const { GetObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+
+exports.getDniImages = async (req, res) => {
+  const userId = req.user.id; // Asume que el ID del usuario está en el token JWT
+
+  try {
+    // Buscar el usuario por ID
+    const user = await prismaClient.usuario.findUnique({
+      where: { id: parseInt(userId) }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Verificar si existen las imágenes
+    if (!user.dni_foto_delante && !user.dni_foto_detras) {
+      return res.status(404).json({ error: 'Imágenes del DNI no encontradas' });
+    }
+
+    // Crear las URLs firmadas para las imágenes
+    const urls = {};
+
+    if (user.dni_foto_delante) {
+      const commandDelante = new GetObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: user.dni_foto_delante,
+      });
+      const signedUrlDelante = await getSignedUrl(s3Client, commandDelante, { expiresIn: 3600 });
+      urls.dni_foto_delante = signedUrlDelante;
+    }
+
+    if (user.dni_foto_detras) {
+      const commandDetras = new GetObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: user.dni_foto_detras,
+      });
+      const signedUrlDetras = await getSignedUrl(s3Client, commandDetras, { expiresIn: 3600 });
+      urls.dni_foto_detras = signedUrlDetras;
+    }
+
+    res.json(urls);
+  } catch (error) {
+    console.error('Error al obtener las imágenes del DNI:', error);
+    res.status(500).json({ error: 'Error al obtener las imágenes del DNI' });
+  }
+};

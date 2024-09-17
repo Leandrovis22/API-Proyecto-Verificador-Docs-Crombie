@@ -1,9 +1,9 @@
+// /middlewares/authMiddleware.js
+
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 const bcrypt = require('bcryptjs');
 
-
-//controlar el Token
 exports.authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Se espera un formato 'Bearer <token>'

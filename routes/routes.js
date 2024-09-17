@@ -9,7 +9,7 @@ const authenticateToken = require('../middlewares/authMiddleware');
 router.post('/dni', authenticateToken, dniController.processDNI)
 
 // router.get('/user', authenticateToken, userController.getUser); // Obtener los datos del usuario
-router.get('/user/dni-images', authenticateToken, dniController.getDniImages); // Obtener las URLs firmadas de las imágenes del DNI
+//router.get('/user/dni-images', authenticateToken, dniController.getDniImages); // Obtener las URLs firmadas de las imágenes del DNI
 // router.put('/user', authenticateToken, userController.updateUser); // Actualizar los datos del usuario
 // router.delete('/user', authenticateToken, userController.deleteUser); //Borra usuario y todos sus datos, imagenes incluidas
 

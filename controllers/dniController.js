@@ -5,9 +5,11 @@ const { analyzeImageWithTextract } = require('../utils/textractUtils');
 const { verificarDatos } = require('../utils/verificationUtils');
 const { uploadToS3 } = require('../utils/s3Utils'); // Suponiendo que tienes esta función en utils
 const multer = require('multer');
+const Queue = require('bull'); // Ejemplo usando Bull para una cola de trabajo
 
 const prisma = new PrismaClient();
 const upload = multer({ storage: multer.memoryStorage() });
+const processingQueue = new Queue('dni-processing'); // Crear una cola para procesamiento de imágenes
 
 exports.processDNI = upload.fields([
   { name: 'dni_foto_delante', maxCount: 1 },
@@ -36,37 +38,62 @@ exports.processDNI = upload.fields([
       }
     });
 
-    // Procesar las imágenes
+    // Enviar el trabajo a la cola para procesamiento
+    processingQueue.add({
+      ticketId: ticket.id,
+      userId: usuario.id,
+      files: req.files,
+      bucketName: process.env.AWS_BUCKET_NAME
+    });
+
+    // Responder inmediatamente
+    res.status(200).json({ message: 'Ticket creado y en proceso' });
+
+  } catch (err) {
+    console.error('Error en el proceso:', err);
+    res.status(500).json({ error: 'Error en el proceso de creación del ticket' });
+  }
+});
+
+// Trabajador de la cola para procesar imágenes y verificar datos
+processingQueue.process(async (job) => {
+  const { ticketId, userId, files, bucketName } = job.data;
+
+  try {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: userId }
+    });
+
+    if (!usuario) throw new Error('Usuario no encontrado');
+
     let dniFotoDelanteFileName = null;
     let dniFotoDetrasFileName = null;
 
-    if (req.files) {
-      if (req.files['dni_foto_delante'] && req.files['dni_foto_delante'][0]) {
-        const fileDelante = req.files['dni_foto_delante'][0];
+    if (files) {
+      if (files['dni_foto_delante'] && files['dni_foto_delante'][0]) {
+        const fileDelante = files['dni_foto_delante'][0];
         dniFotoDelanteFileName = await uploadToS3(fileDelante, usuario.dni.toString());
       }
 
-      if (req.files['dni_foto_detras'] && req.files['dni_foto_detras'][0]) {
-        const fileDetras = req.files['dni_foto_detras'][0];
+      if (files['dni_foto_detras'] && files['dni_foto_detras'][0]) {
+        const fileDetras = files['dni_foto_detras'][0];
         dniFotoDetrasFileName = await uploadToS3(fileDetras, usuario.dni.toString());
       }
     } else {
-      return res.status(400).json({ error: 'No se encontraron imágenes para procesar' });
+      throw new Error('No se encontraron imágenes para procesar');
     }
 
-    // Análisis con Textract
     let dniFotoDelanteText = '';
     let dniFotoDetrasText = '';
 
     if (dniFotoDelanteFileName) {
-      dniFotoDelanteText = await analyzeImageWithTextract(process.env.AWS_BUCKET_NAME, dniFotoDelanteFileName);
+      dniFotoDelanteText = await analyzeImageWithTextract(bucketName, dniFotoDelanteFileName);
     }
 
     if (dniFotoDetrasFileName) {
-      dniFotoDetrasText = await analyzeImageWithTextract(process.env.AWS_BUCKET_NAME, dniFotoDetrasFileName);
+      dniFotoDetrasText = await analyzeImageWithTextract(bucketName, dniFotoDetrasFileName);
     }
 
-    // Verificar los datos con la función verificarDatos
     const verificationResult = await verificarDatos(
       dniFotoDelanteText,
       dniFotoDetrasText,
@@ -78,15 +105,14 @@ exports.processDNI = upload.fields([
     );
 
     if (!verificationResult.success) {
-      // Si la verificación falla, actualizamos el ticket como "fallido"
       await prisma.tiqueteria.update({
-        where: { id: ticket.id },
+        where: { id: ticketId },
         data: {
           estado: 'fallido',
           msqError: verificationResult.error,
         }
       });
-      return res.status(400).json({ error: verificationResult.error });
+      return;
     }
 
     const resTextract = {
@@ -94,36 +120,30 @@ exports.processDNI = upload.fields([
       detras: dniFotoDetrasText
     };
     
-    // Luego guarda este objeto en la base de datos
     const nuevoDni = await prisma.dni.create({
       data: {
         fotoFrente: dniFotoDelanteFileName,
         fotoDetras: dniFotoDetrasFileName,
-        resTextract: resTextract, // Guardar el objeto JSON en la base de datos
-        tiqueteriaId: ticket.id
+        resTextract: resTextract,
+        tiqueteriaId: ticketId
       }
     });
 
-    // Actualizar el ticket a "completado"
     await prisma.tiqueteria.update({
-      where: { id: ticket.id },
+      where: { id: ticketId },
       data: { estado: 'completado' }
     });
 
-    res.status(200).json({ message: 'Verificación exitosa', dni: nuevoDni });
-
   } catch (err) {
-    console.error('Error en el proceso:', err);
+    console.error('Error en el procesamiento:', err);
 
-    // Si ocurre algún error, actualizar el ticket como "fallido"
     await prisma.tiqueteria.update({
-      where: { id: ticket.id },
+      where: { id: ticketId },
       data: { estado: 'fallido', msqError: err.message }
     });
-
-    return res.status(500).json({ error: 'Error en el proceso de verificación' });
   }
 });
+
 
 
 

@@ -5,7 +5,10 @@ const { uploadToS3 } = require('../utils/s3Utils');
 const multer = require('multer');
 const Queue = require('bull');
 
+// Configura Prisma
 const prisma = new PrismaClient();
+
+// Configura Multer para manejar archivos en memoria
 const upload = multer({ storage: multer.memoryStorage() });
 const processingQueue = new Queue('dni-processing');
 
@@ -15,8 +18,7 @@ const uploadMiddleware = upload.fields([
   { name: 'dni_foto_detras', maxCount: 1 }
 ]);
 
-exports.uploadMiddleware = uploadMiddleware;
-
+// Procesa la solicitud de DNI
 exports.processDNI = async (req, res) => {
   uploadMiddleware(req, res, async (err) => {
     if (err) {
@@ -24,7 +26,7 @@ exports.processDNI = async (req, res) => {
     }
 
     try {
-      const userId = req.user.id;
+      const userId = req.user.id; // Asegúrate de que req.user esté definido
 
       const usuario = await prisma.usuario.findUnique({
         where: { id: userId }
@@ -122,7 +124,7 @@ processingQueue.process(async (job) => {
       detras: dniFotoDetrasText
     };
     
-    const nuevoDni = await prisma.dni.create({
+    await prisma.dni.create({
       data: {
         fotoFrente: dniFotoDelanteFileName,
         fotoDetras: dniFotoDetrasFileName,

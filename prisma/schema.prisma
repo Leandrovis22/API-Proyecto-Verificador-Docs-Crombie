@@ -12,7 +12,7 @@ model Usuario {
   apellido       String       
   dni            BigInt       @unique
   cuil           BigInt       @unique
-  mail           String       @unique
+  correo         String       @unique
   password       String       
   telefono       BigInt       
   rol            String       @default("usuario")

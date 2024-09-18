@@ -1,3 +1,5 @@
+// /controllers/dniController.js
+
 const { PrismaClient } = require('@prisma/client');
 const { analyzeImageWithTextract } = require('../utils/textractUtils');
 const { uploadToS3 } = require('../utils/s3Utils');

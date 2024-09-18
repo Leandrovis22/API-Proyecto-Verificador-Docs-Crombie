@@ -3,6 +3,7 @@ const router = express.Router();
 const dniController = require('../controllers/dniController');
 
 router.post('/process-dni', dniController.processDNI);
+router.post
 
 
 

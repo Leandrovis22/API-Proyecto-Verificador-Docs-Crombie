@@ -1,3 +1,5 @@
+//controllers/checkController.js
+
 const { PrismaClient } = require('@prisma/client');
 const { verificarDatos } = require('../utils/verificacionUtils'); // Asegúrate de que la ruta sea correcta
 

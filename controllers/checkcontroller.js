@@ -1,57 +1,56 @@
+const { PrismaClient } = require('@prisma/client');
+const { verificarDatos } = require('../utils/verificacionUtils'); // Asegúrate de que la ruta sea correcta
 
-const { verificarDatos } = require('../utils/verificationUtils');
+const prisma = new PrismaClient();
 
-async function verificarDatosController(ticketId, userId) {
-    try {
-      // Obtener datos del usuario y DNI extraído
-      const usuario = await prisma.usuario.findUnique({
-        where: { id: userId }
-      });
-  
-      if (!usuario) throw new Error('Usuario no encontrado');
-  
-      const dniData = await prisma.dni.findFirst({
-        where: { tiqueteriaId: ticketId }
-      });
-  
-      if (!dniData) throw new Error('No se encontraron datos de DNI para verificar');
-      
-      // Comprobación de los datos extraídos con Textract
-      const verificationResult = await verificarDatos(
-        dniData.resTextract.frente,
-        dniData.resTextract.detras,
-        {
-          nombre: usuario.nombre,
-          apellido: usuario.apellido,
-          dni: usuario.dni.toString(),
-          cuil: usuario.cuil.toString()
-        }
-      );
-  
-      if (!verificationResult.success) {
-        await prisma.tiqueteria.update({
-          where: { id: ticketId },
-          data: {
-            estado: 'fallido',
-            msqError: verificationResult.error,
-          }
-        });
-        return;
-      }
-  
-      // Si la verificación es exitosa, actualizar el estado
-      await prisma.tiqueteria.update({
-        where: { id: ticketId },
-        data: { estado: 'completado' }
-      });
-  
-    } catch (err) {
-      console.error('Error en la verificación de datos:', err);
-  
-      await prisma.tiqueteria.update({
-        where: { id: ticketId },
-        data: { estado: 'fallido', msqError: err.message }
-      });
+// Controlador para mostrar los resultados del análisis de DNI
+exports.checkDNIResults = async (req, res) => {
+  try {
+    const userId = req.user.id; // Asegúrate de que req.user esté definido
+
+    // Buscar el ticket más reciente del usuario
+    const ticket = await prisma.tiqueteria.findFirst({
+      where: { usuarioId: userId },
+      orderBy: { createdAt: 'desc' } // Obtener el ticket más reciente
+    });
+
+    if (!ticket) {
+      return res.status(404).json({ error: 'No se encontró ningún ticket para este usuario' });
     }
+
+    // Buscar el registro de DNI asociado al ticket
+    const dniRecord = await prisma.dni.findUnique({
+      where: { tiqueteriaId: ticket.id }
+    });
+
+    if (!dniRecord) {
+      return res.status(404).json({ error: 'No se encontraron resultados para el ticket actual' });
+    }
+
+    // Extraer los datos del texto analizado
+    const { frente, detras } = dniRecord.resTextract;
+
+    // Datos de verificación proporcionados en el request
+    const requestData = {
+      nombre: req.body.nombre || '',
+      apellido: req.body.apellido || '',
+      dni: req.body.dni || '',
+      cuil: req.body.cuil || ''
+    };
+
+    // Verificar los datos usando verificarDatos
+    const verificacion = await verificarDatos(frente, detras, requestData);
+
+    // Responder con los resultados de Textract, el resultado de verificación y cualquier mensaje de error
+    res.status(200).json({
+      estado: ticket.estado,
+      resultadoTextract: dniRecord.resTextract,
+      mensajeError: ticket.msqError || 'No hubo errores',
+      verificacion: verificacion // Incluye el resultado de la verificación
+    });
+
+  } catch (err) {
+    console.error('Error al recuperar los resultados:', err);
+    res.status(500).json({ error: 'Error al recuperar los resultados del ticket' });
   }
-  
+};

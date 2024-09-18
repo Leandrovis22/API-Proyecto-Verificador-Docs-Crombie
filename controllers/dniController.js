@@ -1,6 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
 const { analyzeImageWithTextract } = require('../utils/textractUtils');
-const { verificarDatos } = require('../utils/verificationUtils');
 const { uploadToS3 } = require('../utils/s3Utils');
 const multer = require('multer');
 const Queue = require('bull');
@@ -64,6 +63,7 @@ processingQueue.process(async (job) => {
   const { ticketId, userId, files, bucketName } = job.data;
 
   try {
+    // Obtener el usuario
     const usuario = await prisma.usuario.findUnique({
       where: { id: userId }
     });
@@ -73,6 +73,7 @@ processingQueue.process(async (job) => {
     let dniFotoDelanteFileName = null;
     let dniFotoDetrasFileName = null;
 
+    // Subir archivos a S3
     if (files) {
       if (files['dni_foto_delante'] && files['dni_foto_delante'][0]) {
         const fileDelante = files['dni_foto_delante'][0];
@@ -90,6 +91,7 @@ processingQueue.process(async (job) => {
     let dniFotoDelanteText = '';
     let dniFotoDetrasText = '';
 
+    // Analizar imágenes con Textract
     if (dniFotoDelanteFileName) {
       dniFotoDelanteText = await analyzeImageWithTextract(bucketName, dniFotoDelanteFileName);
     }
@@ -98,32 +100,12 @@ processingQueue.process(async (job) => {
       dniFotoDetrasText = await analyzeImageWithTextract(bucketName, dniFotoDetrasFileName);
     }
 
-    const verificationResult = await verificarDatos(
-      dniFotoDelanteText,
-      dniFotoDetrasText,
-      {
-        nombre: usuario.nombre,
-        dni: usuario.dni.toString(),
-        cuil: usuario.cuil.toString()
-      }
-    );
-
-    if (!verificationResult.success) {
-      await prisma.tiqueteria.update({
-        where: { id: ticketId },
-        data: {
-          estado: 'fallido',
-          msqError: verificationResult.error,
-        }
-      });
-      return;
-    }
-
+    // Guardar resultado temporal para la siguiente etapa
     const resTextract = {
       frente: dniFotoDelanteText,
       detras: dniFotoDetrasText
     };
-    
+
     await prisma.dni.create({
       data: {
         fotoFrente: dniFotoDelanteFileName,
@@ -135,7 +117,7 @@ processingQueue.process(async (job) => {
 
     await prisma.tiqueteria.update({
       where: { id: ticketId },
-      data: { estado: 'completado' }
+      data: { estado: 'pendiente_verificacion' }
     });
 
   } catch (err) {

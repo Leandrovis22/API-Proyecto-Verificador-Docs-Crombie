@@ -2,10 +2,10 @@ const { verificarDatos } = require('./utils/verificationUtils');
 
 // Datos de prueba
 const requestData = {
-    nombre: "Leandro Ezequiel Viscolungo",
+    nombre: "Leandro Ezequiel",
+    apellido: "Viscolungo",
     dni: "42612132",
     cuil: "20-42612132-9",
-    fecha_nacimiento: "2000-08-19",
 };
 
 const textextract = {

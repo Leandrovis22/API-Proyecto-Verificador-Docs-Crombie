@@ -6,20 +6,20 @@ const { uploadToS3 } = require('../utils/s3Utils');
 const multer = require('multer');
 const Queue = require('bull');
 
-// Configura Prisma
+
 const prisma = new PrismaClient();
 
-// Configura Multer para manejar archivos en memoria
+
 const upload = multer({ storage: multer.memoryStorage() });
 const processingQueue = new Queue('dni-processing');
 
-// Middleware para la subida de archivos
+
 const uploadMiddleware = upload.fields([
   { name: 'dni_foto_delante', maxCount: 1 },
   { name: 'dni_foto_detras', maxCount: 1 }
 ]);
 
-// Procesa la solicitud de DNI
+
 exports.processDNI = async (req, res) => {
   uploadMiddleware(req, res, async (err) => {
     if (err) {
@@ -27,7 +27,7 @@ exports.processDNI = async (req, res) => {
     }
 
     try {
-      const userId = req.user.id; // Asegúrate de que req.user esté definido
+      const userId = req.user.id; 
 
       const usuario = await prisma.usuario.findUnique({
         where: { id: userId }
@@ -60,12 +60,12 @@ exports.processDNI = async (req, res) => {
   });
 };
 
-// Procesador de la cola
+
 processingQueue.process(async (job) => {
   const { ticketId, userId, files, bucketName } = job.data;
 
   try {
-    // Obtener el usuario
+    
     const usuario = await prisma.usuario.findUnique({
       where: { id: userId }
     });
@@ -75,7 +75,7 @@ processingQueue.process(async (job) => {
     let dniFotoDelanteFileName = null;
     let dniFotoDetrasFileName = null;
 
-    // Subir archivos a S3
+    
     if (files) {
       if (files['dni_foto_delante'] && files['dni_foto_delante'][0]) {
         const fileDelante = files['dni_foto_delante'][0];
@@ -92,8 +92,7 @@ processingQueue.process(async (job) => {
 
     let dniFotoDelanteText = '';
     let dniFotoDetrasText = '';
-
-    // Analizar imágenes con Textract
+  
     if (dniFotoDelanteFileName) {
       dniFotoDelanteText = await analyzeImageWithTextract(bucketName, dniFotoDelanteFileName);
     }
@@ -102,7 +101,6 @@ processingQueue.process(async (job) => {
       dniFotoDetrasText = await analyzeImageWithTextract(bucketName, dniFotoDetrasFileName);
     }
 
-    // Guardar resultado temporal para la siguiente etapa
     const resTextract = {
       frente: dniFotoDelanteText,
       detras: dniFotoDetrasText

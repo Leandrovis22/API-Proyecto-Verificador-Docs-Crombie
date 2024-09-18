@@ -1,5 +1,3 @@
-//verificationUtils.js
-
 /**
  * Normaliza una cadena eliminando caracteres especiales y convirtiendo a minúsculas.
  * @param {string} cadena - La cadena a normalizar.
@@ -53,6 +51,57 @@ function extraerFechasNacimiento(texto) {
     return fechas;
 }
 
+
+/**
+ * Convierte un mes abreviado en español a su número correspondiente.
+ * @param {string} mes - Mes en formato abreviado (ENE, FEB, etc.).
+ * @returns {number} El número del mes (1 para enero, 2 para febrero, etc.).
+ */
+function convertirMes(mes) {
+    const meses = {
+        'ENE': 1, 'FEB': 2, 'MAR': 3, 'ABR': 4, 'MAY': 5, 'JUN': 6,
+        'JUL': 7, 'AGO': 8, 'SEP': 9, 'OCT': 10, 'NOV': 11, 'DIC': 12
+    };
+    return meses[mes.toUpperCase()] || null; // Devuelve null si el mes no es válido
+}
+
+function esMayorDeEdad(fechas) {
+    if (fechas.length === 0) return false;
+
+    const hoy = new Date();
+    const { dia, mes, ano } = fechas[0]; // Primera fecha extraída
+    
+    // Convertir el mes de texto a un número
+    const mesNumero = convertirMes(mes);
+    if (!mesNumero) {
+        console.error("Mes inválido:", mes);
+        return false; // Retorna falso si el mes no es válido
+    }
+
+    // Crear un objeto de fecha con la primera fecha extraída
+    const fechaNacimiento = new Date(`${ano}-${mesNumero}-${dia}`);
+    
+    // Si la fecha es inválida, detener
+    if (isNaN(fechaNacimiento.getTime())) {
+        console.error("Fecha de nacimiento inválida:", fechaNacimiento);
+        return false;
+    }
+
+    // Calcular la edad
+    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    const mesActual = hoy.getMonth() + 1;
+    const diaActual = hoy.getDate();
+
+    if (mesActual < mesNumero || (mesActual === mesNumero && diaActual < dia)) {
+        edad--;
+    }
+
+    //console.log("fechas: ", fechas, "hoy: ", hoy, "fechaNacimiento: ", fechaNacimiento, "edad: ", edad);
+
+    return edad >= 18;
+}
+
+
 /**
  * Compara los datos extraídos con los datos proporcionados en el request.
  * @param {string} frente - Texto extraído del frente del documento.
@@ -61,11 +110,10 @@ function extraerFechasNacimiento(texto) {
  * @param {string} requestData.nombre - Nombre proporcionado en el request.
  * @param {string} requestData.dni - DNI proporcionado en el request.
  * @param {string} requestData.cuil - CUIL proporcionado en el request.
- * @param {string} requestData.fecha_nacimiento - Fecha de nacimiento proporcionada en el request.
  * @returns {object} Resultado de la verificación.
  */
 async function verificarDatos(frente, detras, requestData) {
-    const { nombre, dni, cuil, fecha_nacimiento } = requestData;
+    const { nombre, apellido, dni, cuil } = requestData;
 
     // Normalizar el DNI proporcionado
     const dniNormalizado = normalizarDNI(dni);
@@ -77,18 +125,11 @@ async function verificarDatos(frente, detras, requestData) {
     
     const cuilEsValido = /^\d{2}-\d{8}-\d{1}$/.test(cuil);
 
-    // Convertir fecha de nacimiento al formato del texto extraído
-    const fechaNacimientoFormato = convertirFecha(fecha_nacimiento);
-
     // Extraer todas las fechas de nacimiento posibles del texto extraído
     const fechasExtraidas = extraerFechasNacimiento(frente);
 
-    // Encontrar la fecha extraída que coincida con la proporcionada
-    const fechaNacimientoCoincide = fechasExtraidas.some(
-        fecha => fecha.dia === fechaNacimientoFormato.split(' ')[0] &&
-                 fecha.mes === fechaNacimientoFormato.split(' ')[1] &&
-                 fecha.ano === fechaNacimientoFormato.split(' ')[2]
-    );
+    // Verificar si la persona es mayor o igual a 18 años
+    const edadValida = esMayorDeEdad(fechasExtraidas);
 
     // Normalizar el nombre proporcionado en request
     const nombreNormalizado = normalizarCadena(nombre);
@@ -97,7 +138,7 @@ async function verificarDatos(frente, detras, requestData) {
     const partesNombre = nombreNormalizado.split(/\s+/);
     const primerNombre = partesNombre[0] || '';
     const segundoNombre = partesNombre.length > 2 ? partesNombre[1] : ''; // Segundo nombre puede no estar presente
-    const apellido = partesNombre.slice(-1).join(' '); // El último componente es el apellido
+    const apellidoNormalizado = normalizarCadena(apellido);
 
     // Convertir el texto extraído a minúsculas para la comparación
     const frenteNormalizado = normalizarCadena(frente);
@@ -105,50 +146,47 @@ async function verificarDatos(frente, detras, requestData) {
     // Verificar si cada parte del nombre está en el texto extraído
     const primerNombreCoincide = frenteNormalizado.includes(primerNombre);
     const segundoNombreCoincide = segundoNombre ? frenteNormalizado.includes(segundoNombre) : true;
-    const apellidoCoincide = frenteNormalizado.includes(apellido);
-
-    //console.log(partesNombre, primerNombre, segundoNombre, apellido);
-    //console.log(primerNombreCoincide, segundoNombreCoincide, apellidoCoincide);
+    const apellidoCoincide = frenteNormalizado.includes(apellidoNormalizado);
 
     // Comparar DNI
     const dniCoincide = dniEsValido && dniFrenteNormalizado.includes(dniNormalizado) && dniDetrasNormalizado.includes(dniNormalizado);
     const cuilCoincide = cuilEsValido && detras.includes(cuil);
 
-    // Identificar qué comparación falló
-    let errores = [];
-    if (!primerNombreCoincide) errores.push('primer nombre');
-    if (!segundoNombreCoincide && segundoNombre) errores.push('segundo nombre');
-    if (!apellidoCoincide) errores.push('apellido');
-    if (!dniEsValido) errores.push('DNI inválido');
-    if (!dniCoincide) errores.push('DNI');
-    if (!cuilEsValido) errores.push('CUIL inválido');
-    if (!cuilCoincide) errores.push('CUIL');
-    if (!fechaNacimientoCoincide) errores.push('fecha de nacimiento');
-
-    if (errores.length === 0) {
-        return { success: true };
-    } else {
-        const mensajesError = {
-            'primer nombre': 'El primer nombre no coincide.',
-            'segundo nombre': 'El segundo nombre no coincide.',
-            'apellido': 'El apellido no coincide.',
-            'DNI inválido': 'El DNI proporcionado es inválido.',
-            'DNI': 'El DNI no coincide con el documento.',
-            'CUIL inválido': 'El CUIL proporcionado es inválido.',
-            'CUIL': 'El CUIL no coincide con el documento.',
-            'fecha de nacimiento': 'La fecha de nacimiento no coincide con el documento.',
-        };
-    
-        const mensajes = errores.map(error => mensajesError[error]);
-    
-        return { 
-            success: false, 
-            error: `Hubo problemas con los siguientes datos: ${mensajes.join(' ')}` 
-        };
-    }
-    
+    // Retorno detallado con los resultados de las verificaciones
+    return {
+        primerNombre: {
+            valido: primerNombreCoincide,
+            razon: primerNombreCoincide ? null : 'El primer nombre no coincide.'
+        },
+        segundoNombre: {
+            valido: segundoNombreCoincide,
+            razon: segundoNombreCoincide ? null : 'El segundo nombre no coincide.'
+        },
+        apellido: {
+            valido: apellidoCoincide,
+            razon: apellidoCoincide ? null : 'El apellido no coincide.'
+        },
+        dniValido: {
+            valido: dniEsValido,
+            razon: dniEsValido ? null : 'El DNI proporcionado es inválido.'
+        },
+        dniCoincide: {
+            valido: dniCoincide,
+            razon: dniCoincide ? null : 'El DNI no coincide con el documento.'
+        },
+        cuilValido: {
+            valido: cuilEsValido,
+            razon: cuilEsValido ? null : 'El CUIL proporcionado es inválido.'
+        },
+        cuilCoincide: {
+            valido: cuilCoincide,
+            razon: cuilCoincide ? null : 'El CUIL no coincide con el documento.'
+        },
+        mayorDeEdad: {
+            valido: edadValida,
+            razon: edadValida ? null : 'La persona debe ser mayor de 18 años.'
+        }
+    };
 }
 
-module.exports = {
-    verificarDatos
-};
+module.exports = { verificarDatos };

@@ -9,7 +9,6 @@ const Queue = require('bull');
 
 const prisma = new PrismaClient();
 
-
 const upload = multer({ storage: multer.memoryStorage() });
 const processingQueue = new Queue('dni-processing');
 

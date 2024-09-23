@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 // Register 
 exports.register = async (req, res) => {
 
-  const { nombre, dni, cuil, correo, password, telefono, fecha_nacimiento } = req.body;
+  const { nombre,apellido, dni, cuil, correo, password, telefono} = req.body;
 
   if (!dni || !correo || !password) {
     return res.status(400).json({ error: 'DNI, correo y contraseña son requeridos' });
@@ -38,12 +38,12 @@ exports.register = async (req, res) => {
     const newUser = await prisma.usuario.create({
       data: {
         nombre,
+        apellido,
         dni: dniInt,
         cuil,
         correo,
         password: hashedPassword,  // Usar el password hasheado
-        telefono: telefonoInt,
-        fecha_nacimiento
+        telefono: telefonoInt
       }
     });
 

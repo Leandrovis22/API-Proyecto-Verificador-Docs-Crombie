@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const dniController = require('../controllers/dniController');
+const { authenticateToken } = require('../middlewares/authMiddleware');
 
-router.post('/process-dni', dniController.processDNI);
-router.post
+router.post('/process-dni', authenticateToken, dniController.processDNI);
 
-
+//router.get('/users', userController.getUsers); //Solo para development trae info de todos los user se debera quitar al final
 
 // router.get('/user', authenticateToken, userController.getUser); // Obtener los datos del usuario
 //router.get('/user/dni-images', authenticateToken, dniController.getDniImages); // Obtener las URLs firmadas de las imágenes del DNI

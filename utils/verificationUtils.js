@@ -1,3 +1,5 @@
+// /Utils/verificationUtils.js
+
 /**
  * Normaliza una cadena eliminando caracteres especiales y convirtiendo a minúsculas.
  * @param {string} cadena - La cadena a normalizar.

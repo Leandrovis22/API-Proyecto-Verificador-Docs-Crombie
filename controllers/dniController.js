@@ -4,23 +4,15 @@ const { PrismaClient } = require('@prisma/client');
 const { analyzeImageWithTextract } = require('../utils/textractUtils');
 const { uploadToS3 } = require('../utils/s3Utils');
 const multer = require('multer');
-const Queue = require('bull');
-
-
-const { verificarDatos } = require('../utils/verificationUtils'); // Importar la función de verificación
-
+const { verificarDatos } = require('../utils/verificationUtils');
 
 const prisma = new PrismaClient();
-
 const upload = multer({ storage: multer.memoryStorage() });
-const processingQueue = new Queue('dni-processing');
-
 
 const uploadMiddleware = upload.fields([
   { name: 'dni_foto_delante', maxCount: 1 },
   { name: 'dni_foto_detras', maxCount: 1 }
 ]);
-
 
 exports.processDNI = async (req, res) => {
   uploadMiddleware(req, res, async (err) => {
@@ -29,11 +21,8 @@ exports.processDNI = async (req, res) => {
     }
 
     try {
-      const userId = req.user.id; 
-
-      const usuario = await prisma.usuario.findUnique({
-        where: { id: userId }
-      });
+      const userId = parseInt(req.user.id, 10);
+      const usuario = await prisma.usuario.findUnique({ where: { id: userId } });
 
       if (!usuario) {
         return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -46,12 +35,8 @@ exports.processDNI = async (req, res) => {
         }
       });
 
-      processingQueue.add({
-        ticketId: ticket.id,
-        userId: usuario.id,
-        files: req.files,
-        bucketName: process.env.AWS_BUCKET_NAME
-      });
+      // Inicia el procesamiento de imágenes sin bloquear
+      setImmediate(() => processImages(ticket.id, usuario, req.files));
 
       res.status(200).json({ message: 'Ticket creado y en proceso' });
 
@@ -62,16 +47,10 @@ exports.processDNI = async (req, res) => {
   });
 };
 
-processingQueue.process(async (job) => {
-  const { ticketId, userId, files, bucketName } = job.data;
+const processImages = async (ticketId, usuario, files) => {
+  console.log('Procesando tiquete:', ticketId, 'Usuario:', usuario.id, 'Archivos:', files);
 
   try {
-    const usuario = await prisma.usuario.findUnique({
-      where: { id: userId }
-    });
-
-    if (!usuario) throw new Error('Usuario no encontrado');
-
     let dniFotoDelanteFileName = null;
     let dniFotoDetrasFileName = null;
 
@@ -93,11 +72,11 @@ processingQueue.process(async (job) => {
     let dniFotoDetrasText = '';
 
     if (dniFotoDelanteFileName) {
-      dniFotoDelanteText = await analyzeImageWithTextract(bucketName, dniFotoDelanteFileName);
+      dniFotoDelanteText = await analyzeImageWithTextract(process.env.AWS_BUCKET_NAME, dniFotoDelanteFileName);
     }
 
     if (dniFotoDetrasFileName) {
-      dniFotoDetrasText = await analyzeImageWithTextract(bucketName, dniFotoDetrasFileName);
+      dniFotoDetrasText = await analyzeImageWithTextract(process.env.AWS_BUCKET_NAME, dniFotoDetrasFileName);
     }
 
     const resTextract = {
@@ -105,7 +84,6 @@ processingQueue.process(async (job) => {
       detras: dniFotoDetrasText
     };
 
-    // Guardar las imágenes y el texto extraído en la base de datos
     await prisma.dni.create({
       data: {
         fotoFrente: dniFotoDelanteFileName,
@@ -115,7 +93,6 @@ processingQueue.process(async (job) => {
       }
     });
 
-    // Verificar los datos extraídos con los datos proporcionados
     const resultadoVerificacion = await verificarDatos(dniFotoDelanteText, dniFotoDetrasText, {
       nombre: usuario.nombre,
       apellido: usuario.apellido,
@@ -123,7 +100,6 @@ processingQueue.process(async (job) => {
       cuil: usuario.cuil.toString()
     });
 
-    // Actualizar el ticket con el resultado de la verificación
     await prisma.tiqueteria.update({
       where: { id: ticketId },
       data: {
@@ -134,10 +110,9 @@ processingQueue.process(async (job) => {
 
   } catch (err) {
     console.error('Error en el procesamiento:', err);
-
     await prisma.tiqueteria.update({
       where: { id: ticketId },
       data: { estado: 'fallido', msqError: err.message }
     });
   }
-});
+};

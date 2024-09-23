@@ -38,7 +38,7 @@ function extraerFechasNacimiento(texto) {
     const fechas = [];
     const fechaRegex = /(\d{2})\s([A-Z]{3})\/\s([A-Z]{3})\s(\d{4})/g;
     let match;
-    
+
     while ((match = fechaRegex.exec(texto)) !== null) {
         const [_, dia, mesEspañol, mesIngles, ano] = match;
         fechas.push({
@@ -70,7 +70,7 @@ function esMayorDeEdad(fechas) {
 
     const hoy = new Date();
     const { dia, mes, ano } = fechas[0]; // Primera fecha extraída
-    
+
     // Convertir el mes de texto a un número
     const mesNumero = convertirMes(mes);
     if (!mesNumero) {
@@ -80,7 +80,7 @@ function esMayorDeEdad(fechas) {
 
     // Crear un objeto de fecha con la primera fecha extraída
     const fechaNacimiento = new Date(`${ano}-${mesNumero}-${dia}`);
-    
+
     // Si la fecha es inválida, detener
     if (isNaN(fechaNacimiento.getTime())) {
         console.error("Fecha de nacimiento inválida:", fechaNacimiento);
@@ -122,7 +122,7 @@ async function verificarDatos(frente, detras, requestData) {
 
     // Validar DNI
     const dniEsValido = /^\d{8}$/.test(dniNormalizado);
-    
+
     const cuilEsValido = /^\d{2}-\d{8}-\d{1}$/.test(cuil);
 
     // Extraer todas las fechas de nacimiento posibles del texto extraído
@@ -152,7 +152,11 @@ async function verificarDatos(frente, detras, requestData) {
     const dniCoincide = dniEsValido && dniFrenteNormalizado.includes(dniNormalizado) && dniDetrasNormalizado.includes(dniNormalizado);
     const cuilCoincide = cuilEsValido && detras.includes(cuil);
 
-    // Retorno detallado con los resultados de las verificaciones
+    // Evaluar si todos los campos son válidos
+    const todosValidos = primerNombreCoincide && segundoNombreCoincide && apellidoCoincide &&
+        dniEsValido && dniCoincide && cuilEsValido && cuilCoincide && edadValida;
+
+    // Retorno detallado con los resultados de las verificaciones y el estado final
     return {
         primerNombre: {
             valido: primerNombreCoincide,
@@ -185,7 +189,8 @@ async function verificarDatos(frente, detras, requestData) {
         mayorDeEdad: {
             valido: edadValida,
             razon: edadValida ? null : 'La persona debe ser mayor de 18 años.'
-        }
+        },
+        valido: todosValidos // Campo que indica si todas las verificaciones fueron exitosas
     };
 }
 

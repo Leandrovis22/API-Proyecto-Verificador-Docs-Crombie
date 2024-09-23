@@ -7,6 +7,9 @@ const multer = require('multer');
 const Queue = require('bull');
 
 
+const { verificarDatos } = require('../utils/verificationUtils'); // Importar la función de verificación
+
+
 const prisma = new PrismaClient();
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -59,12 +62,10 @@ exports.processDNI = async (req, res) => {
   });
 };
 
-
 processingQueue.process(async (job) => {
   const { ticketId, userId, files, bucketName } = job.data;
 
   try {
-    
     const usuario = await prisma.usuario.findUnique({
       where: { id: userId }
     });
@@ -74,7 +75,6 @@ processingQueue.process(async (job) => {
     let dniFotoDelanteFileName = null;
     let dniFotoDetrasFileName = null;
 
-    
     if (files) {
       if (files['dni_foto_delante'] && files['dni_foto_delante'][0]) {
         const fileDelante = files['dni_foto_delante'][0];
@@ -91,7 +91,7 @@ processingQueue.process(async (job) => {
 
     let dniFotoDelanteText = '';
     let dniFotoDetrasText = '';
-  
+
     if (dniFotoDelanteFileName) {
       dniFotoDelanteText = await analyzeImageWithTextract(bucketName, dniFotoDelanteFileName);
     }
@@ -105,6 +105,7 @@ processingQueue.process(async (job) => {
       detras: dniFotoDetrasText
     };
 
+    // Guardar las imágenes y el texto extraído en la base de datos
     await prisma.dni.create({
       data: {
         fotoFrente: dniFotoDelanteFileName,
@@ -114,9 +115,21 @@ processingQueue.process(async (job) => {
       }
     });
 
+    // Verificar los datos extraídos con los datos proporcionados
+    const resultadoVerificacion = await verificarDatos(dniFotoDelanteText, dniFotoDetrasText, {
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      dni: usuario.dni.toString(),
+      cuil: usuario.cuil.toString()
+    });
+
+    // Actualizar el ticket con el resultado de la verificación
     await prisma.tiqueteria.update({
       where: { id: ticketId },
-      data: { estado: 'pendiente_verificacion' }
+      data: {
+        estado: resultadoVerificacion.valido ? 'completado' : 'fallido',
+        resultado: resultadoVerificacion
+      }
     });
 
   } catch (err) {

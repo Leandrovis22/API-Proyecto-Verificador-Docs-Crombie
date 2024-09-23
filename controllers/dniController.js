@@ -2,9 +2,11 @@
 
 const { PrismaClient } = require('@prisma/client');
 const { analyzeImageWithTextract } = require('../utils/textractUtils');
-const { uploadToS3 } = require('../utils/s3Utils');
 const multer = require('multer');
 const { verificarDatos } = require('../utils/verificationUtils');
+
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const path = require('path');
 
 const prisma = new PrismaClient();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -13,6 +15,36 @@ const uploadMiddleware = upload.fields([
   { name: 'dni_foto_delante', maxCount: 1 },
   { name: 'dni_foto_detras', maxCount: 1 }
 ]);
+
+// Configura AWS para S3
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+// Función para subir un archivo a S3
+const uploadToS3 = async (file, dni) => {
+  const fileExtension = path.extname(file.originalname);
+  const fileName = `${dni}-${Date.now()}${fileExtension}`;
+  const uploadParams = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: fileName,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
+
+  try {
+    await s3Client.send(new PutObjectCommand(uploadParams));
+    return fileName;
+  } catch (err) {
+    console.error('Error al subir el archivo a S3:', err);
+    throw new Error('Error al subir el archivo a S3');
+  }
+};
+
 
 exports.processDNI = async (req, res) => {
   uploadMiddleware(req, res, async (err) => {
@@ -48,7 +80,6 @@ exports.processDNI = async (req, res) => {
 };
 
 const processImages = async (ticketId, usuario, files) => {
-  console.log('Procesando tiquete:', ticketId, 'Usuario:', usuario.id, 'Archivos:', files);
 
   try {
     let dniFotoDelanteFileName = null;
@@ -97,7 +128,7 @@ const processImages = async (ticketId, usuario, files) => {
       nombre: usuario.nombre,
       apellido: usuario.apellido,
       dni: usuario.dni.toString(),
-      cuil: usuario.cuil.toString()
+      cuil: usuario.cuil
     });
 
     await prisma.tiqueteria.update({

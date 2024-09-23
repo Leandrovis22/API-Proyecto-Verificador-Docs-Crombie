@@ -11,7 +11,7 @@ model Usuario {
   nombre         String       
   apellido       String       
   dni            BigInt       @unique
-  cuil           BigInt       @unique
+  cuil           String       @unique
   correo         String       @unique
   password       String       
   telefono       BigInt       

@@ -1,20 +1,11 @@
-/*
-  Warnings:
-
-  - You are about to drop the `usuario` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE "usuario";
-
 -- CreateTable
 CREATE TABLE "Usuario" (
     "id" SERIAL NOT NULL,
     "nombre" TEXT NOT NULL,
     "apellido" TEXT NOT NULL,
     "dni" BIGINT NOT NULL,
-    "cuil" BIGINT NOT NULL,
-    "mail" TEXT NOT NULL,
+    "cuil" TEXT NOT NULL,
+    "correo" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "telefono" BIGINT NOT NULL,
     "rol" TEXT NOT NULL DEFAULT 'usuario',
@@ -30,7 +21,7 @@ CREATE TABLE "Tiqueteria" (
     "fecha" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "estado" TEXT NOT NULL DEFAULT 'pendiente',
     "monto" DOUBLE PRECISION NOT NULL DEFAULT 0.00,
-    "msqError" TEXT,
+    "resultado" JSONB,
 
     CONSTRAINT "Tiqueteria_pkey" PRIMARY KEY ("id")
 );
@@ -53,7 +44,7 @@ CREATE UNIQUE INDEX "Usuario_dni_key" ON "Usuario"("dni");
 CREATE UNIQUE INDEX "Usuario_cuil_key" ON "Usuario"("cuil");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Usuario_mail_key" ON "Usuario"("mail");
+CREATE UNIQUE INDEX "Usuario_correo_key" ON "Usuario"("correo");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Dni_tiqueteriaId_key" ON "Dni"("tiqueteriaId");

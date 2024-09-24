@@ -53,9 +53,9 @@ exports.processDNI = async (req, res) => {
     }
 
     try {
-      // const userId = parseInt(req.user.id, 10); // Comentado esta linea remover temporalmente verificacion jwt
+      const userId = parseInt(req.user.id, 10); // Comentado esta linea remover temporalmente verificacion jwt
 
-      const userId = parseInt(req.body.userId, 10); // Se obtiene el id del body del request quitar y descomentar arriba para reactivar jwt
+      //const userId = parseInt(req.body.userId, 10); // Se obtiene el id del body del request quitar y descomentar arriba para reactivar jwt
 
       const usuario = await prisma.usuario.findUnique({ where: { id: userId } });
 

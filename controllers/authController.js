@@ -47,13 +47,7 @@ exports.register = async (req, res) => {
       }
     });
 
-    const token = jwt.sign(
-      { id: newUser.id.toString(), dni: newUser.dni.toString() },
-      process.env.JWT_SECRET,
-      { expiresIn: '30m' }
-    );
-
-    res.status(201).json({ message: 'Registro exitoso', token });
+    res.status(201).json({ message: 'Registro exitoso' });
   } catch (creationError) {
     console.error('Error al crear el usuario:', creationError);
     return res.status(500).json({ error: 'Error al crear el usuario' });

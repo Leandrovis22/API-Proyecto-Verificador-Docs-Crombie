@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+/* const { PrismaClient } = require('@prisma/client');
 
 const multer = require('multer');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
@@ -266,26 +266,42 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar el usuario' });
   }
 };
-
+ */
 
 // Controlador para obtener todos los usuarios
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 exports.getUsers = async (req, res) => {
   try {
-    const users = await prismaClient.usuario.findMany();
+    const users = await prisma.usuario.findMany({
+      include: {
+        Tiqueterias: {
+          include: {
+            Dni: true,
+          },
+        },
+      },
+    });
 
-    // Serializar los valores de BigInt como strings
-    const replacer = (key, value) => {
-      if (typeof value === 'bigint') {
-        return value.toString();
-      }
-      return value;
-    };
+    // Convertir BigInt a String
+    const usersFormatted = users.map(user => ({
+      ...user,
+      dni: user.dni.toString(),
+      telefono: user.telefono.toString(),  // Si también es BigInt
+      Tiqueterias: user.Tiqueterias.map(tiqueteria => ({
+        ...tiqueteria,
+        // Si tienes campos BigInt en Tiqueterias o Dni, también los conviertes a string
+        Dni: tiqueteria.Dni ? {
+          ...tiqueteria.Dni,
+          // Aquí podrías convertir otros BigInt si los hay en Dni
+        } : null,
+      })),
+    }));
 
-    const usersJson = JSON.parse(JSON.stringify(users, replacer));
-
-    res.json(usersJson);
+    res.status(200).json(usersFormatted);
   } catch (error) {
-    console.error('Error al obtener los usuarios:', error);
-    res.status(500).json({ error: 'Error al obtener los usuarios' });
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los usuarios", details: error.message });
   }
 };

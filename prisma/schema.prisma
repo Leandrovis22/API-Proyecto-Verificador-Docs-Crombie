@@ -17,7 +17,7 @@ model Usuario {
   telefono       BigInt       
   rol            String       @default("usuario")
   createdAt      DateTime     @default(now()) 
-  Tiqueterias    Tiqueteria[]
+  Tiqueterias    Tiqueteria[] // No se especifica onDelete aquí
 }
 
 model Tiqueteria {
@@ -27,8 +27,8 @@ model Tiqueteria {
   estado      String     @default("pendiente")
   monto       Float      @default(0.00)  
   resultado   Json?    
-  Usuario     Usuario    @relation(fields: [usuarioId], references: [id]) 
-  Dni         Dni?       
+  Usuario     Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade) // Configurar eliminación en cascada
+  Dni         Dni?       // Relación opcional con DNI, no se especifican onDelete o fields aquí
 }
 
 model Dni {
@@ -37,5 +37,5 @@ model Dni {
   fotoDetras    String     
   resTextract   Json       
   tiqueteriaId  Int        @unique
-  Tiqueteria    Tiqueteria @relation(fields: [tiqueteriaId], references: [id]) 
+  Tiqueteria    Tiqueteria @relation(fields: [tiqueteriaId], references: [id], onDelete: Cascade) // Solo especificar aquí
 }

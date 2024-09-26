@@ -13,19 +13,11 @@ exports.register = async (req, res) => {
     return res.status(400).json({ error: 'DNI, correo y contraseña son requeridos' });
   }
 
-  const dniInt = parseInt(dni, 10);
-  if (isNaN(dniInt)) {
-    return res.status(400).json({ error: 'DNI debe ser un número entero' });
-  }
-
-  const telefonoInt = parseInt(telefono, 10);
-  if (isNaN(telefonoInt)) {
-    return res.status(400).json({ error: 'Teléfono debe ser un número entero' });
-  }
+  
 
   const existingUser = await prisma.usuario.findFirst({
     where: {
-      OR: [{ dni: dniInt }, { correo }]
+      OR: [{ dni}, { correo }]
     }
   });
 
@@ -39,11 +31,11 @@ exports.register = async (req, res) => {
       data: {
         nombre,
         apellido,
-        dni: dniInt,
+        dni,
         cuil,
         correo,
         password: hashedPassword,  // Usar el password hasheado
-        telefono: telefonoInt
+        telefono
       }
     });
 

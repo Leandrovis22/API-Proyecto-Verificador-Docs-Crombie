@@ -7,6 +7,8 @@ const checkController = require('../controllers/checkController');
 
 router.get('/users', userController.getUsers); //Solo para development trae info de todos los user se debera quitar al final
 
+router.get('/user', authenticateToken, userController.getUser);
+
 router.post('/process-dni', dniController.processDNI);
 
 router.get('/check-data', checkController.checkData);	

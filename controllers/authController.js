@@ -52,7 +52,7 @@ exports.login = async (req, res) => {
 
   try {
     const user = await prisma.usuario.findUnique({
-      where: { dni: BigInt(dni) }
+      where: { dni: dni }
     });
 
     if (!user) {

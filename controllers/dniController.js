@@ -56,7 +56,6 @@ exports.processDNI = async (req, res) => {
 
       const userId = parseInt(req.body.userId, 10); // Se obtiene el id del body del request quitar y descomentar arriba para reactivar jwt
 
-      console.log( userId, typeof userId);
 
       const usuario = await prisma.usuario.findUnique({
         where: { id: userId },
@@ -65,6 +64,7 @@ exports.processDNI = async (req, res) => {
       if (!usuario) {
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
+
 
       const ticket = await prisma.tiqueteria.create({
         data: {

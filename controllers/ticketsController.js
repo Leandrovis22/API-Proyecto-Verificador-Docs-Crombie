@@ -13,7 +13,7 @@ const s3Client = new S3Client({
 
 const prisma = new PrismaClient();
 exports.getTickets = async (req, res) => {
-    const { id = 8} = req.params;
+    const { id = 8 } = req.params;
     try {
         const ticket = await prisma.tiqueteria.findUnique({
             where: {
@@ -25,23 +25,26 @@ exports.getTickets = async (req, res) => {
         });
 
         console.log('Ticket devuelto:', ticket);
-        if (!ticket || !ticket.Dni || !ticket.Dni.fotoFrente || ticket.Dni.fotoDetras) {
-            return res.status(404).json({ message: 'Ticket, DNI, o foto no encontrado' });
+        if (!ticket || !ticket.Dni || !ticket.Dni.fotoFrente || !ticket.Dni.fotoDetras) {
+            return res.status(404).json({ message: 'Ticket, DNI, o fotos no encontrados' });
         }
 
-        const command = new GetObjectCommand({
+        const commandFrente = new GetObjectCommand({
             Bucket: process.env.AWS_BUCKET_NAME,
-            Key: ticket.Dni.fotoFrente,
+            Key: ticket.Dni.fotoFrente
+        });
+        const signedUrlFrente = await getSignedUrl(s3Client, commandFrente, { expiresIn: 3600 });
+
+      
+        const commandDetras = new GetObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
             Key: ticket.Dni.fotoDetras
         });
+        const signedUrlDetras = await getSignedUrl(s3Client, commandDetras, { expiresIn: 3600 });
 
-        const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-
-        return res.json({ fotoFrenteUrl: signedUrl, fotosDetrasUrl: signedUrl });
+        return res.json({ fotoFrenteUrl: signedUrlFrente, fotoDetrasUrl: signedUrlDetras });
     } catch (error) {
         console.error('Error devolviendo ticket:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
-
-

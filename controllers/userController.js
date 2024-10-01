@@ -305,3 +305,29 @@ exports.getUsers = async (req, res) => {
     res.status(500).json({ error: "Error al obtener los usuarios", details: error.message });
   }
 };
+
+exports.getUser = async (req, res) => {
+  const userId = parseInt(req.user.id, 10) // Asumiendo que tienes el id del usuario en el objeto req.user
+
+  try {
+    const user = await prisma.usuario.findUnique({
+      where: { id: userId },
+      include: {
+        Tiqueterias: {
+          include: {
+            Dni: true // Incluir datos de DNI si existen
+          }
+        }
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    return res.json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error al obtener el usuario' });
+  }
+};

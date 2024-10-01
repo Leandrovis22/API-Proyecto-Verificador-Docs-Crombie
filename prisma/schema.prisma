@@ -10,11 +10,11 @@ model Usuario {
   id             Int          @id @default(autoincrement())
   nombre         String       
   apellido       String       
-  dni            BigInt       @unique
+  dni            String       @unique
   cuil           String       @unique
   correo         String       @unique
   password       String       
-  telefono       BigInt       
+  telefono       String       
   rol            String       @default("usuario")
   createdAt      DateTime     @default(now()) 
   Tiqueterias    Tiqueteria[] // No se especifica onDelete aquí
@@ -26,7 +26,8 @@ model Tiqueteria {
   fecha       DateTime   @default(now())  
   estado      String     @default("pendiente")
   monto       Float      @default(0.00)  
-  resultado   Json?    
+  resultado   Json?
+  msqError    String?    
   Usuario     Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade) // Configurar eliminación en cascada
   Dni         Dni?       // Relación opcional con DNI, no se especifican onDelete o fields aquí
 }

@@ -13,7 +13,7 @@ const s3Client = new S3Client({
 
 const prisma = new PrismaClient();
 exports.getTickets = async (req, res) => {
-    const { id = 8 } = req.params;
+    const { id = 21 } = req.params;
     try {
         const ticket = await prisma.tiqueteria.findUnique({
             where: {

@@ -12,7 +12,7 @@ router.get('/users', userController.getUsers); //Solo para development trae info
 router.post('/process-dni', authenticateToken, dniController.processDNI);
 
 router.get('/ticket',authenticateToken,getTicket )
-router.get('/tickets',authenticateToken,getTickets )
+router.get('/check',authenticateToken,getTickets )
 // router.get('/user', authenticateToken, userController.getUser); // Obtener los datos del usuario
 //router.get('/user/dni-images', authenticateToken, dniController.getDniImages); // Obtener las URLs firmadas de las imágenes del DNI
 // router.put('/user', authenticateToken, userController.updateUser); // Actualizar los datos del usuario

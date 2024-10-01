@@ -4,6 +4,7 @@ const dniController = require('../controllers/dniController');
 const { authenticateToken } = require('../middlewares/authMiddleware');
 const userController = require('../controllers/userController');
 const { getTicket } = require('../controllers/ticketController');
+const { getTickets } = require('../controllers/ticketsController');
 
 
 router.get('/users', userController.getUsers); //Solo para development trae info de todos los user se debera quitar al final
@@ -11,6 +12,7 @@ router.get('/users', userController.getUsers); //Solo para development trae info
 router.post('/process-dni', authenticateToken, dniController.processDNI);
 
 router.get('/ticket',authenticateToken,getTicket )
+router.get('/tickets',authenticateToken,getTickets )
 // router.get('/user', authenticateToken, userController.getUser); // Obtener los datos del usuario
 //router.get('/user/dni-images', authenticateToken, dniController.getDniImages); // Obtener las URLs firmadas de las imágenes del DNI
 // router.put('/user', authenticateToken, userController.updateUser); // Actualizar los datos del usuario

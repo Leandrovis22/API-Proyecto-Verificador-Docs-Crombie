@@ -12,9 +12,8 @@ const s3Client = new S3Client({
 });
 
 const prisma = new PrismaClient();
-
 exports.getTicket = async (req, res) => {
-    const { id = 8 } = req.params; 
+    const { id = 8 } = req.params;
     try {
         const ticket = await prisma.tiqueteria.findUnique({
             where: {
@@ -26,12 +25,10 @@ exports.getTicket = async (req, res) => {
         });
 
         console.log('Ticket devuelto:', ticket);
-
         if (!ticket || !ticket.Dni || !ticket.Dni.fotoFrente) {
             return res.status(404).json({ message: 'Ticket, DNI, o foto no encontrado' });
         }
 
-        
         const command = new GetObjectCommand({
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: ticket.Dni.fotoFrente,

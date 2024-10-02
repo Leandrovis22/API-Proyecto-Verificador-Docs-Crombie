@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 // const dniController = require('../controllers/dniController');
-// const { authenticateToken } = require('../middlewares/authMiddleware');
+const { authenticateToken } = require('../middlewares/authMiddleware');
 // const userController = require('../controllers/userController');
 // const { getTicket } = require('../controllers/components/ticket');
 // const { getTickets } = require('../controllers/ticketsController');

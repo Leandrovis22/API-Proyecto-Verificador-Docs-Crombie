@@ -65,17 +65,22 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id.toString(), dni: user.dni.toString() },  // Usar `user` aquí
+      { id: user.id.toString(), rol: user.rol },
       process.env.JWT_SECRET,
       { expiresIn: '30m' }
     );
 
+    // Excluir campos sensibles como password, createdAt y Tiqueterias
+    const { password: _, createdAt, Tiqueterias, id, ...userData } = user;
+
     res.json({
       message: 'Login exitoso',
-      token: token
+      token: token,
+      user: userData
     });
   } catch (error) {
     console.error('Error en el login:', error);
     res.status(500).json({ error: 'Error en el login' });
   }
 };
+

@@ -62,7 +62,7 @@ function extraerFechasNacimiento(texto) {
 function convertirMes(mes) {
     const meses = {
         'ENE': 1, 'FEB': 2, 'MAR': 3, 'ABR': 4, 'MAY': 5, 'JUN': 6,
-        'JUL': 7, 'AGO': 8, 'SEP': 9, 'OCT': 10, 'NOV': 11, 'DIC': 12
+        'JUL': 7, 'AGO': 8, 'SEP': 9, 'SET':9, 'OCT': 10, 'NOV': 11, 'DIC': 12
     };
     return meses[mes.toUpperCase()] || null; // Devuelve null si el mes no es válido
 }

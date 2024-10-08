@@ -19,40 +19,28 @@ function normalizarDNI(dni) {
 }
 
 /**
- * Convierte una fecha en formato YYYY-MM-DD a (DD MMM YYYY).
- * @param {string} fecha - La fecha en formato YYYY-MM-DD.
- * @returns {string} La fecha en formato DD MMM YYYY.
- */
-function convertirFecha(fecha) {
-    const meses = [
-        'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'
-    ];
-    const [ano, mes, dia] = fecha.split('-');
-    return `${dia} ${meses[parseInt(mes, 10) - 1]} ${ano}`;
-}
-
-/**
  * Extrae todas las fechas de nacimiento posibles del texto extraído.
  * @param {string} texto - Texto del que se extraerán las fechas.
  * @returns {Array} Array de objetos con día, mes y año extraídos.
  */
-function extraerFechasNacimiento(texto) {
-    const fechas = [];
-    const fechaRegex = /(\d{2})\s([A-Z]{3})\/\s([A-Z]{3})\s(\d{4})/g;
-    let match;
-
-    while ((match = fechaRegex.exec(texto)) !== null) {
-        const [_, dia, mesEspañol, mesIngles, ano] = match;
-        fechas.push({
-            dia,
-            mes: mesEspañol,
-            ano
-        });
+function extraerFechasNacimiento(frente) {
+        // Buscar la fecha que viene después de "Date of birth"
+        const regex = /Date of birth[^\d]*(\d{2})\s+([A-Z]{3})[^\d]*(\d{4})/;
+        const match = frente.match(regex);
+        
+        if (match) {
+            const [, dia, mes, ano] = match;
+            console.log(dia, mes, ano);
+            return {
+                dia,
+                mes,
+                ano
+            };
+        }
+        
+        // Si no se encuentra la fecha, retornar null o un objeto vacío
+        return null;
     }
-
-    return fechas;
-}
-
 
 /**
  * Convierte un mes abreviado en español a su número correspondiente.
@@ -62,25 +50,25 @@ function extraerFechasNacimiento(texto) {
 function convertirMes(mes) {
     const meses = {
         'ENE': 1, 'FEB': 2, 'MAR': 3, 'ABR': 4, 'MAY': 5, 'JUN': 6,
-        'JUL': 7, 'AGO': 8, 'SEP': 9, 'OCT': 10, 'NOV': 11, 'DIC': 12
+        'JUL': 7, 'AGO': 8, 'SEP': 9,'SET': 9, 'OCT': 10, 'NOV': 11, 'DIC': 12
     };
     return meses[mes.toUpperCase()] || null; // Devuelve null si el mes no es válido
 }
 
-function esMayorDeEdad(fechas) {
-    if (fechas.length === 0) return false;
+function esMayorDeEdad(fecha) {
+    if (!fecha || !fecha.dia || !fecha.mes || !fecha.ano) return false;
 
     const hoy = new Date();
-    const { dia, mes, ano } = fechas[0]; // Primera fecha extraída
+    const { dia, mes, ano } = fecha;
 
     // Convertir el mes de texto a un número
     const mesNumero = convertirMes(mes);
     if (!mesNumero) {
         console.error("Mes inválido:", mes);
-        return false; // Retorna falso si el mes no es válido
+        return false;
     }
 
-    // Crear un objeto de fecha con la primera fecha extraída
+    // Crear un objeto de fecha con la fecha proporcionada
     const fechaNacimiento = new Date(`${ano}-${mesNumero}-${dia}`);
 
     // Si la fecha es inválida, detener
@@ -97,8 +85,6 @@ function esMayorDeEdad(fechas) {
     if (mesActual < mesNumero || (mesActual === mesNumero && diaActual < dia)) {
         edad--;
     }
-
-    //console.log("fechas: ", fechas, "hoy: ", hoy, "fechaNacimiento: ", fechaNacimiento, "edad: ", edad);
 
     return edad >= 18;
 }

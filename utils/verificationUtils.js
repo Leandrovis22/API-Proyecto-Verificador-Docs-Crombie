@@ -30,7 +30,6 @@ function extraerFechasNacimiento(frente) {
         
         if (match) {
             const [, dia, mes, ano] = match;
-            console.log(dia, mes, ano);
             return {
                 dia,
                 mes,

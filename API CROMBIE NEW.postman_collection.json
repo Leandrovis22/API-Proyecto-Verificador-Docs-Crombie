@@ -1,23 +1,16 @@
 {
 	"info": {
-		"_postman_id": "32772ffc-b39c-4500-b63e-5c39ef6d96a4",
+		"_postman_id": "dfba8880-cb8f-44ed-b4bf-f749b34ef1ab",
 		"name": "API CROMBIE NEW",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "37578155"
+		"_exporter_id": "38565121"
 	},
 	"item": [
 		{
 			"name": "enviar dni",
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "",
-							"type": "string"
-						}
-					]
+					"type": "noauth"
 				},
 				"method": "POST",
 				"header": [],
@@ -27,16 +20,16 @@
 						{
 							"key": "dni_foto_detras",
 							"type": "file",
-							"src": "/C:/Users/aleto/OneDrive/Escritorio/DNI/DNI-Atras.jpeg"
+							"src": "/C:/Users/pablo/OneDrive/Documents/foto_DNI_dorso - copia.jpg"
 						},
 						{
 							"key": "dni_foto_delante",
 							"type": "file",
-							"src": "/C:/Users/aleto/OneDrive/Escritorio/DNI/DNI-Frente.jpeg"
+							"src": "/C:/Users/pablo/OneDrive/Documents/foto_DNI_frente - copia.jpg"
 						},
 						{
 							"key": "userId",
-							"value": "1",
+							"value": "11",
 							"type": "text"
 						}
 					]
@@ -51,6 +44,66 @@
 					"path": [
 						"api",
 						"process-dni"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener imagen",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE4Iiwicm9sIjoidXN1YXJpbyIsImlhdCI6MTcyODQ4MTQ1OCwiZXhwIjoxNzI4NDgzMjU4fQ.ZTMi3Rso-lWj_8pcJE1eylcMbuyvJSgQ1wI6N9yfBeU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/image",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener imagenes",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE4Iiwicm9sIjoidXN1YXJpbyIsImlhdCI6MTcyODQ4MTQ1OCwiZXhwIjoxNzI4NDgzMjU4fQ.ZTMi3Rso-lWj_8pcJE1eylcMbuyvJSgQ1wI6N9yfBeU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/images",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"images"
 					]
 				}
 			},
@@ -114,6 +167,47 @@
 			"response": []
 		},
 		{
+			"name": "obtener todos los tickets de user o admin",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyODQ4MjczNCwiZXhwIjoxNzI4NDg0NTM0fQ.kPCDBDLQz3ZiToNtp3xNn30J8lQdh6WIOfBrNMiU_XA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/tiqueteria",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tiqueteria"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "register",
 			"request": {
 				"method": "POST",
@@ -136,6 +230,34 @@
 					"path": [
 						"auth",
 						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"dni\": \"43494036\",\r\n  \"password\": \"12334\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/auth/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
 					]
 				}
 			},

@@ -15,12 +15,14 @@
     "@aws-sdk/client-textract": "^3.637.0",
     "@aws-sdk/s3-request-presigner": "^3.633.0",
     "@prisma/client": "^5.18.0",
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "bull": "^4.16.3",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.15",
     "type-is": "^1.6.18"
   },
   "devDependencies": {

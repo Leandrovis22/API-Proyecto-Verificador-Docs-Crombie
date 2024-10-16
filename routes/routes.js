@@ -17,13 +17,10 @@ router.post('/process-dni', authenticateToken, dniController.processDNI);
 router.get('/check-data', authenticateToken, checkController.checkData);	
 
 router.get('/tiqueteria', authenticateToken, Tiqueteria.Tiqueteria)
-
 //ruta para obtener imagenes
-
 router.get('/image', authenticateToken, Ticket.getTicket);
 
 router.get('/images', authenticateToken, Tickets.getTickets);
-
 // router.get('/user', authenticateToken, userController.getUser); // Obtener los datos del usuario
 //router.get('/user/dni-images', authenticateToken, dniController.getDniImages); // Obtener las URLs firmadas de las imágenes del DNI
 // router.put('/user', authenticateToken, userController.updateUser); // Actualizar los datos del usuario

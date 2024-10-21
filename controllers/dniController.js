@@ -1,15 +1,24 @@
-// /controllers/dniController.js
-
 const { PrismaClient } = require("@prisma/client");
 const { analyzeImageWithTextract } = require("../utils/textractUtils");
 const multer = require("multer");
+const sharp = require("sharp"); 
 const { verificarDatos } = require("../utils/verificationUtils");
-
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const path = require("path");
 
 const prisma = new PrismaClient();
-const upload = multer({ storage: multer.memoryStorage() });
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 }, 
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Solo se permiten imágenes."));
+    }
+    cb(null, true);
+  },
+});
+
 
 const uploadMiddleware = upload.fields([
   { name: "dni_foto_delante", maxCount: 1 },
@@ -25,14 +34,21 @@ const s3Client = new S3Client({
   },
 });
 
-// Función para subir un archivo a S3
+
 const uploadToS3 = async (file, dni) => {
   const fileExtension = path.extname(file.originalname);
   const fileName = `${dni}-${Date.now()}${fileExtension}`;
+
+
+  const compressedImageBuffer = await sharp(file.buffer)
+    .resize(800) 
+    .jpeg({ quality: 80 }) 
+    .toBuffer();
+
   const uploadParams = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
-    Body: file.buffer,
+    Body: compressedImageBuffer,
     ContentType: file.mimetype,
   };
 
@@ -52,10 +68,7 @@ exports.processDNI = async (req, res) => {
     }
 
     try {
-      const userId = parseInt(req.user.id, 10); // Comentado esta linea remover temporalmente verificacion jwt
-
-     // const userId = parseInt(req.body.userId, 10); // Se obtiene el id del body del request quitar y descomentar arriba para reactivar jwt
-
+      const userId = parseInt(req.body.userId, 10); 
 
       const usuario = await prisma.usuario.findUnique({
         where: { id: userId },
@@ -65,7 +78,6 @@ exports.processDNI = async (req, res) => {
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
 
-
       const ticket = await prisma.tiqueteria.create({
         data: {
           usuarioId: usuario.id,
@@ -73,7 +85,6 @@ exports.processDNI = async (req, res) => {
         },
       });
 
-      // Inicia el procesamiento de imágenes sin bloquear
       setImmediate(() => processImages(ticket.id, usuario, req.files));
 
       res.status(200).json({ message: "Ticket creado y en proceso" });

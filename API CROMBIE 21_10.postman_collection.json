@@ -1,16 +1,23 @@
 {
 	"info": {
-		"_postman_id": "dfba8880-cb8f-44ed-b4bf-f749b34ef1ab",
+		"_postman_id": "e1f679cc-8d34-4219-babf-1fe6a062a2ab",
 		"name": "API CROMBIE NEW",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38565121"
+		"_exporter_id": "26623480"
 	},
 	"item": [
 		{
 			"name": "enviar dni",
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTUzNjIwOCwiZXhwIjoxNzI5NTM4MDA4fQ.kzy9iDVjWO0u7XtE8NjLOnc1qXR-APOrWKR28p5qzoY",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
@@ -20,17 +27,12 @@
 						{
 							"key": "dni_foto_detras",
 							"type": "file",
-							"src": "/C:/Users/pablo/OneDrive/Documents/foto_DNI_dorso - copia.jpg"
+							"src": "/C:/Users/leand/Downloads/dnileandrodetras.jpg"
 						},
 						{
 							"key": "dni_foto_delante",
 							"type": "file",
-							"src": "/C:/Users/pablo/OneDrive/Documents/foto_DNI_frente - copia.jpg"
-						},
-						{
-							"key": "userId",
-							"value": "11",
-							"type": "text"
+							"src": "/C:/Users/leand/Downloads/dnileandrofrente.jpg"
 						}
 					]
 				},
@@ -57,7 +59,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE4Iiwicm9sIjoidXN1YXJpbyIsImlhdCI6MTcyODQ4MTQ1OCwiZXhwIjoxNzI4NDgzMjU4fQ.ZTMi3Rso-lWj_8pcJE1eylcMbuyvJSgQ1wI6N9yfBeU",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTUzNDM0NywiZXhwIjoxNzI5NTM2MTQ3fQ.iBiofWoXfX22dAx-4tPfT2qDQNmUJGAg2jgwzop3Fs0",
 							"type": "string"
 						}
 					]
@@ -87,7 +89,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE4Iiwicm9sIjoidXN1YXJpbyIsImlhdCI6MTcyODQ4MTQ1OCwiZXhwIjoxNzI4NDgzMjU4fQ.ZTMi3Rso-lWj_8pcJE1eylcMbuyvJSgQ1wI6N9yfBeU",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTUzNDM0NywiZXhwIjoxNzI5NTM2MTQ3fQ.iBiofWoXfX22dAx-4tPfT2qDQNmUJGAg2jgwzop3Fs0",
 							"type": "string"
 						}
 					]
@@ -95,7 +97,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/images",
+					"raw": "http://localhost:3000/api/tickets",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -103,7 +105,7 @@
 					"port": "3000",
 					"path": [
 						"api",
-						"images"
+						"tickets"
 					]
 				}
 			},
@@ -129,44 +131,6 @@
 			"response": []
 		},
 		{
-			"name": "delete user",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:3000/api/user",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"user"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "obtener todos los tickets de user o admin",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -177,7 +141,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyODQ4MjczNCwiZXhwIjoxNzI4NDg0NTM0fQ.kPCDBDLQz3ZiToNtp3xNn30J8lQdh6WIOfBrNMiU_XA",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTUzNDM0NywiZXhwIjoxNzI5NTM2MTQ3fQ.iBiofWoXfX22dAx-4tPfT2qDQNmUJGAg2jgwzop3Fs0",
 							"type": "string"
 						}
 					]
@@ -242,7 +206,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"dni\": \"43494036\",\r\n  \"password\": \"12334\"\r\n}",
+					"raw": "{\r\n  \"dni\": \"42612132\",\r\n  \"password\": \"1234\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

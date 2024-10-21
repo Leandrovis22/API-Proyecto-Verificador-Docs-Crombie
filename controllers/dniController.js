@@ -41,7 +41,7 @@ const uploadToS3 = async (file, dni) => {
 
 
   const compressedImageBuffer = await sharp(file.buffer)
-    .resize(800) 
+    .resize(600) 
     .jpeg({ quality: 80 }) 
     .toBuffer();
 
@@ -68,10 +68,12 @@ exports.processDNI = async (req, res) => {
     }
 
     try {
-      const userId = parseInt(req.body.userId, 10); 
+      const userId = parseInt(req.user.id, 10); 
 
       const usuario = await prisma.usuario.findUnique({
-        where: { id: userId },
+        where: {
+          id: userId, 
+        },
       });
 
       if (!usuario) {

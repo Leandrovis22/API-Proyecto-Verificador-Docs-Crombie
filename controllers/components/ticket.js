@@ -40,7 +40,11 @@ exports.getTicket = async (req, res) => {
         });
 
         const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-
+          // Generar las URLs firmadas para las dos imágenes
+          const commandFrente = new GetObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: ticket.Dni.fotoFrente,
+        });
         return res.json({ fotoFrenteUrl: signedUrl });
     } catch (error) {
         console.error('Error devolviendo ticket:', error);

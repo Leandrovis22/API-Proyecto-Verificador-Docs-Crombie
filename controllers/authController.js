@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
 
     // Excluir campos sensibles como password, createdAt y Tiqueterias
     const { password: _, createdAt, Tiqueterias, id, ...userData } = user;
-
+    console.log(token)
     res.json({
       message: 'Login exitoso',
       token: token,

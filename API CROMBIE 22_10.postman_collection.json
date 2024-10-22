@@ -14,7 +14,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTUzNjIwOCwiZXhwIjoxNzI5NTM4MDA4fQ.kzy9iDVjWO0u7XtE8NjLOnc1qXR-APOrWKR28p5qzoY",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
 							"type": "string"
 						}
 					]
@@ -59,7 +59,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTUzNDM0NywiZXhwIjoxNzI5NTM2MTQ3fQ.iBiofWoXfX22dAx-4tPfT2qDQNmUJGAg2jgwzop3Fs0",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
 							"type": "string"
 						}
 					]
@@ -89,7 +89,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTUzNDM0NywiZXhwIjoxNzI5NTM2MTQ3fQ.iBiofWoXfX22dAx-4tPfT2qDQNmUJGAg2jgwzop3Fs0",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
 							"type": "string"
 						}
 					]
@@ -114,6 +114,16 @@
 		{
 			"name": "get users",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -131,6 +141,76 @@
 			"response": []
 		},
 		{
+			"name": "forgot-password",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"correo\": \"leand00000000001234@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/forgot-password",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"forgot-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/reset-password/:",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"newPassword\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTcyOTYzNDIyNiwiZXhwIjoxNzI5NjM3ODI2fQ.ErFxqnjSGTBiuDhZgZLGi0oIuZ4db6MS-TeuCCZh-6k",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reset-password",
+						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTcyOTYzNDIyNiwiZXhwIjoxNzI5NjM3ODI2fQ.ErFxqnjSGTBiuDhZgZLGi0oIuZ4db6MS-TeuCCZh-6k"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "obtener todos los tickets de user o admin",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -141,7 +221,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTUzNDM0NywiZXhwIjoxNzI5NTM2MTQ3fQ.iBiofWoXfX22dAx-4tPfT2qDQNmUJGAg2jgwzop3Fs0",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
 							"type": "string"
 						}
 					]
@@ -166,6 +246,47 @@
 					"path": [
 						"api",
 						"tiqueteria"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener la respuesta check-data",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/check-data",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"check-data"
 					]
 				}
 			},

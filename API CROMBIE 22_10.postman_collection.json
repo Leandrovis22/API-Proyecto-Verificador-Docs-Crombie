@@ -119,7 +119,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYzMzc3MiwiZXhwIjoxNzI5NjM1NTcyfQ.OotJVuaTnO_1WNorSa0whw9d5QYb3JNNA4wXmVXWAkY",
 							"type": "string"
 						}
 					]
@@ -135,6 +135,44 @@
 					"path": [
 						"api",
 						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "put user (Actualizar user)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYzNDgzNiwiZXhwIjoxNzI5NjM2NjM2fQ.8EqJbgPNtrD2jdtyBv_TUZddCBa9et5By1LlhlJRO0s",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"usuarioId\": 3,\r\n  \"nombre\": \"Leandro Ezequiel\",\r\n  \"apellido\": \"Viscolungo\",\r\n  \"dni\": \"42612132\",\r\n  \"cuil\": \"20-42612132-9\",\r\n  \"correo\": \"leand00000000001234@gmail.com\",\r\n  \"telefono\": \"555-123456\",\r\n  \"rol\": \"admin\",\r\n  \"password\": HAY QUE AGREGARLO AL BACK\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
 					]
 				}
 			},

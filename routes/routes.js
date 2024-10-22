@@ -13,8 +13,8 @@ const { actualizarUsuario, obtenerUsuarios } = require('../controllers/adminCont
 // Ruta para obtener datos del usuario actual
 router.get('/user', authenticateToken, userController.getUser);
 
-// Ruta para actualizar un usuario como admin
-router.put('/user', authenticateToken, actualizarUsuario);
+// Ruta para actualizar un usuario solo como admin
+router.put('/user', authenticateToken, actualizarUsuario); // Agregar permitir al admin cambiar la contraseña del usuario?
 
 // Ruta para obtener todos los usuarios como admin
 router.get('/users', authenticateToken, obtenerUsuarios);

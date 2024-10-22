@@ -4,7 +4,6 @@ const { hashPassword } = require('../middlewares/authMiddleware');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Register 
 exports.register = async (req, res) => {
 
   const { nombre,apellido, dni, cuil, correo, password, telefono} = req.body;
@@ -26,7 +25,7 @@ exports.register = async (req, res) => {
   }
 
   try {
-    const hashedPassword = await hashPassword(password);  // Asegúrate de que esta función devuelva el hash
+    const hashedPassword = await hashPassword(password);
     const newUser = await prisma.usuario.create({
       data: {
         nombre,
@@ -34,7 +33,7 @@ exports.register = async (req, res) => {
         dni,
         cuil,
         correo,
-        password: hashedPassword,  // Usar el password hasheado
+        password: hashedPassword,
         telefono
       }
     });
@@ -46,7 +45,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// Controlador para el login
 exports.login = async (req, res) => {
   const { dni, password } = req.body;
 
@@ -70,7 +68,6 @@ exports.login = async (req, res) => {
       { expiresIn: '30m' }
     );
 
-    // Excluir campos sensibles como password, createdAt y Tiqueterias
     const { password: _, createdAt, Tiqueterias, id, ...userData } = user;
     console.log(token)
     res.json({

@@ -36,8 +36,7 @@ function extraerFechasNacimiento(frente) {
                 ano
             };
         }
-        
-        // Si no se encuentra la fecha, retornar null o un objeto vacío
+
         return null;
     }
 
@@ -51,7 +50,7 @@ function convertirMes(mes) {
         'ENE': 1, 'FEB': 2, 'MAR': 3, 'ABR': 4, 'MAY': 5, 'JUN': 6,
         'JUL': 7, 'AGO': 8, 'SEP': 9, 'SET':9, 'OCT': 10, 'NOV': 11, 'DIC': 12
     };
-    return meses[mes.toUpperCase()] || null; // Devuelve null si el mes no es válido
+    return meses[mes.toUpperCase()] || null;
 }
 
 function esMayorDeEdad(fecha) {
@@ -60,14 +59,14 @@ function esMayorDeEdad(fecha) {
     const hoy = new Date();
     const { dia, mes, ano } = fecha;
 
-    // Convertir el mes de texto a un número
+    // Convertir el mes de texto a número
     const mesNumero = convertirMes(mes);
     if (!mesNumero) {
         console.error("Mes inválido:", mes);
         return false;
     }
 
-    // Crear un objeto de fecha con la fecha proporcionada
+    // Crear un objeto de fecha con la fecha obtenida
     const fechaNacimiento = new Date(`${ano}-${mesNumero}-${dia}`);
 
     // Si la fecha es inválida, detener
@@ -76,7 +75,6 @@ function esMayorDeEdad(fecha) {
         return false;
     }
 
-    // Calcular la edad
     let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
     const mesActual = hoy.getMonth() + 1;
     const diaActual = hoy.getDate();
@@ -88,9 +86,7 @@ function esMayorDeEdad(fecha) {
     return edad >= 18;
 }
 
-
 /**
- * Compara los datos extraídos con los datos proporcionados en el request.
  * @param {string} frente - Texto extraído del frente del documento.
  * @param {string} detras - Texto extraído del dorso del documento.
  * @param {object} requestData - Datos proporcionados en el request.
@@ -102,15 +98,10 @@ function esMayorDeEdad(fecha) {
 async function verificarDatos(frente, detras, requestData) {
     const { nombre, apellido, dni, cuil } = requestData;
 
-    // Normalizar el DNI proporcionado
     const dniNormalizado = normalizarDNI(dni);
+
     const dniFrenteNormalizado = normalizarDNI(frente);
     const dniDetrasNormalizado = normalizarDNI(detras);
-
-    // Validar DNI
-    const dniEsValido = /^\d{8}$/.test(dniNormalizado);
-
-    const cuilEsValido = /^\d{2}-\d{8}-\d{1}$/.test(cuil);
 
     // Extraer todas las fechas de nacimiento posibles del texto extraído
     const fechasExtraidas = extraerFechasNacimiento(frente);
@@ -118,10 +109,10 @@ async function verificarDatos(frente, detras, requestData) {
     // Verificar si la persona es mayor o igual a 18 años
     const edadValida = esMayorDeEdad(fechasExtraidas);
 
-    // Normalizar el nombre proporcionado en request
+    // Normalizar el nombre del request
     const nombreNormalizado = normalizarCadena(nombre);
 
-    // Dividir el nombre proporcionado en partes
+    // Dividir el nombre en partes
     const partesNombre = nombreNormalizado.split(/\s+/);
     const primerNombre = partesNombre[0] || '';
     const segundoNombre = partesNombre.length > 2 ? partesNombre[1] : ''; // Segundo nombre puede no estar presente
@@ -129,6 +120,9 @@ async function verificarDatos(frente, detras, requestData) {
 
     // Convertir el texto extraído a minúsculas para la comparación
     const frenteNormalizado = normalizarCadena(frente);
+
+    const dniEsValido = /^\d{8}$/.test(dniNormalizado);
+    const cuilEsValido = /^\d{2}-\d{8}-\d{1}$/.test(cuil);
 
     // Verificar si cada parte del nombre está en el texto extraído
     const primerNombreCoincide = frenteNormalizado.includes(primerNombre);
@@ -139,11 +133,10 @@ async function verificarDatos(frente, detras, requestData) {
     const dniCoincide = dniEsValido && dniFrenteNormalizado.includes(dniNormalizado) && dniDetrasNormalizado.includes(dniNormalizado);
     const cuilCoincide = cuilEsValido && detras.includes(cuil);
 
-    // Evaluar si todos los campos son válidos
     const todosValidos = primerNombreCoincide && segundoNombreCoincide && apellidoCoincide &&
         dniEsValido && dniCoincide && cuilEsValido && cuilCoincide && edadValida;
 
-    // Retorno detallado con los resultados de las verificaciones y el estado final
+    // Retorno con los resultados
     return {
         primerNombre: {
             valido: primerNombreCoincide,
@@ -177,7 +170,7 @@ async function verificarDatos(frente, detras, requestData) {
             valido: edadValida,
             razon: edadValida ? null : 'La persona debe ser mayor de 18 años.'
         },
-        valido: todosValidos // Campo que indica si todas las verificaciones fueron exitosas
+        valido: todosValidos
     };
 }
 

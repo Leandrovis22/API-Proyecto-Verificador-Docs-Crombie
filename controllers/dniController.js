@@ -80,6 +80,21 @@ exports.processDNI = async (req, res) => {
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
 
+      const inProcessTicket = await prisma.tiqueteria.findFirst({
+        where: {
+          usuarioId: usuario.id,
+          estado: {
+            in: ["pendiente"],
+          },
+        },
+      });
+
+      if (inProcessTicket) {
+        return res.status(400).json({
+          error: "Ya existe un ticket en curso para este usuario. Espera a que finalice.",
+        });
+      }
+
       const ticket = await prisma.tiqueteria.create({
         data: {
           usuarioId: usuario.id,

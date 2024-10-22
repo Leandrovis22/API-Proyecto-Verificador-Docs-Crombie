@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 exports.actualizarUsuario = async (req, res) => {
     try {
-        const adminId = 3; // o 3
+        const adminId = parseInt(req.user.id, 10)
         const { usuarioId, nombre, apellido, dni, cuil, correo, telefono, rol } = req.body;
 
         const admin = await prisma.usuario.findUnique({
@@ -56,7 +56,7 @@ exports.actualizarUsuario = async (req, res) => {
 
 exports.obtenerUsuarios = async (req, res) => {
     try {
-        const adminId = 2; // o 3
+        const adminId = parseInt(req.user.id, 10)
 
         const admin = await prisma.usuario.findUnique({
             where: {

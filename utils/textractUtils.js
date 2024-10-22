@@ -39,7 +39,6 @@ const analyzeImageWithTextract = async (bucketName, fileName) => {
     }
   }
 
-  // Process the blocks to extract text
   const extractTextFromBlocks = (blocks) => {
     let text = '';
     blocks.forEach(block => {

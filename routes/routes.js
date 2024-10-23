@@ -7,10 +7,23 @@ const checkController = require('../controllers/checkController');
 const { getTicket } = require('../controllers/components/ticket');
 const { getTickets } = require('../controllers/components/tickets');
 const Tiqueteria = require('../controllers/tiqueteriaController');
+const { sendResetPasswordEmail, resetPassword } = require('../controllers/forgotPass');
+const { actualizarUsuario, obtenerUsuarios } = require('../controllers/adminController');
 
-router.get('/users', userController.getUsers); //Solo para development trae info de todos los user se debera quitar al final
-
+// Ruta para obtener datos del usuario actual
 router.get('/user', authenticateToken, userController.getUser);
+
+// Ruta para actualizar un usuario solo como admin
+router.put('/user', authenticateToken, actualizarUsuario); // Agregar permitir al admin cambiar la contraseña del usuario?
+
+// Ruta para obtener todos los usuarios como admin
+router.get('/users', authenticateToken, obtenerUsuarios);
+
+// Ruta para enviar el correo con link para restablecer contraseña
+router.post('/forgot-password', sendResetPasswordEmail);
+
+// Ruta para restablecer la contraseña usando el link anterior
+router.post('/reset-password/:token', resetPassword);
 
 router.post('/process-dni', authenticateToken, dniController.processDNI);
 
@@ -22,8 +35,8 @@ router.get('/tickets', authenticateToken, getTickets)
 
 router.get('/check-data', authenticateToken, checkController.checkData);
 
-// Ruta para obtener un ticket o todos los tickets segun rol
-router.get('/tiqueteria', authenticateToken, Tiqueteria.Tiqueteria) // Hay que modificar de  resultado: ticket.msqError, a resultado: ticket.resultado, 
+// Ruta para obtener un ticket o todos los tickets segun rol, solo datos no imagenes
+router.get('/tiqueteria', authenticateToken, Tiqueteria.Tiqueteria); // Hay que modificar de  resultado: ticket.msqError, a resultado: ticket.resultado, 
 
 
 module.exports = router;

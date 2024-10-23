@@ -1,0 +1,390 @@
+{
+	"info": {
+		"_postman_id": "e1f679cc-8d34-4219-babf-1fe6a062a2ab",
+		"name": "API CROMBIE NEW",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26623480"
+	},
+	"item": [
+		{
+			"name": "enviar dni",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "dni_foto_detras",
+							"type": "file",
+							"src": "/C:/Users/leand/Downloads/dnileandrodetras.jpg"
+						},
+						{
+							"key": "dni_foto_delante",
+							"type": "file",
+							"src": "/C:/Users/leand/Downloads/dnileandrofrente.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/process-dni",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"process-dni"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener imagen",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/image",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener imagenes",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/tickets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYzMzc3MiwiZXhwIjoxNzI5NjM1NTcyfQ.OotJVuaTnO_1WNorSa0whw9d5QYb3JNNA4wXmVXWAkY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "put user (Actualizar user)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYzNDgzNiwiZXhwIjoxNzI5NjM2NjM2fQ.8EqJbgPNtrD2jdtyBv_TUZddCBa9et5By1LlhlJRO0s",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"usuarioId\": 3,\r\n  \"nombre\": \"Leandro Ezequiel\",\r\n  \"apellido\": \"Viscolungo\",\r\n  \"dni\": \"42612132\",\r\n  \"cuil\": \"20-42612132-9\",\r\n  \"correo\": \"leand00000000001234@gmail.com\",\r\n  \"telefono\": \"555-123456\",\r\n  \"rol\": \"admin\",\r\n  \"password\": HAY QUE AGREGARLO AL BACK\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "forgot-password",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"correo\": \"leand00000000001234@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/forgot-password",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"forgot-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/reset-password/:",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"newPassword\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTcyOTYzNDIyNiwiZXhwIjoxNzI5NjM3ODI2fQ.ErFxqnjSGTBiuDhZgZLGi0oIuZ4db6MS-TeuCCZh-6k",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reset-password",
+						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTcyOTYzNDIyNiwiZXhwIjoxNzI5NjM3ODI2fQ.ErFxqnjSGTBiuDhZgZLGi0oIuZ4db6MS-TeuCCZh-6k"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener todos los tickets de user o admin",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/tiqueteria",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tiqueteria"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener la respuesta check-data",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/check-data",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"check-data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Alejandro Tomás\",\r\n  \"apellido\": \"Perren\",\r\n  \"dni\": \"45343674\",\r\n  \"cuil\": \"20-45343674-9\",\r\n  \"correo\": \"adsadad@ffsad\",\r\n  \"password\": \"alejdnadsa\",\r\n  \"telefono\": \"432312342123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/auth/register",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"dni\": \"42612132\",\r\n  \"password\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/auth/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

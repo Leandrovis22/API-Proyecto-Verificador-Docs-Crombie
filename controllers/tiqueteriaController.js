@@ -44,7 +44,7 @@ exports.Tiqueteria = async (req, res) => {
         const response = tiquets.map(ticket => ({
             id: ticket.id,
             estado: ticket.estado,
-            resultado: ticket.msqError,
+            resultado: ticket.resultado,
             fecha: ticket.fecha,
             usuarioId: ticket.usuarioId,
             dni: ticket.Usuario.dni 

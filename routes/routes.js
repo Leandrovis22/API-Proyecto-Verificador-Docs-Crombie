@@ -4,7 +4,7 @@ const dniController = require('../controllers/dniController');
 const { authenticateToken } = require('../middlewares/authMiddleware');
 const userController = require('../controllers/userController');
 const checkController = require('../controllers/checkController');
-const { getTicket } = require('../controllers/components/ticket');
+const { getImageTicket } = require('../controllers/components/imageTicket');
 const { getTickets } = require('../controllers/components/tickets');
 const Tiqueteria = require('../controllers/tiqueteriaController');
 const { sendResetPasswordEmail, resetPassword } = require('../controllers/forgotPass');
@@ -28,7 +28,7 @@ router.post('/reset-password/:token', resetPassword);
 router.post('/process-dni', authenticateToken, dniController.processDNI);
 
 // Ruta para obtener una imagen url solo de dni frente de una sola persona a la vez
-router.get('/image', authenticateToken, getTicket);
+router.get('/image/:ticketId', authenticateToken, getImageTicket);
 
 // Ruta para obtener las dos imagenes url del dni frente y detras de una sola persona a la vez
 router.get('/tickets', authenticateToken, getTickets)

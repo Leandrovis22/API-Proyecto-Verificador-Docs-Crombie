@@ -28,7 +28,7 @@ router.post('/reset-password/:token', resetPassword);
 router.post('/process-dni', authenticateToken, dniController.processDNI);
 
 // Ruta para obtener una imagen url solo de dni frente de una sola persona a la vez
-router.get('/image', authenticateToken, getTicket);
+router.get('/image/:id', authenticateToken, getTicket);
 
 // Ruta para obtener las dos imagenes url del dni frente y detras de una sola persona a la vez
 router.get('/tickets', authenticateToken, getTickets)

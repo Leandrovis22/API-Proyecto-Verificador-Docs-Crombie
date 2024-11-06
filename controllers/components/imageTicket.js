@@ -2,7 +2,6 @@ const { PrismaClient } = require('@prisma/client');
 const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
-// Configura AWS S3
 const s3Client = new S3Client({
     region: process.env.AWS_REGION,
     credentials: {
@@ -13,17 +12,13 @@ const s3Client = new S3Client({
 
 const prisma = new PrismaClient();
 
-exports.getTicket = async (req, res) => {
-    const userId = parseInt(req.user.id, 10);
+exports.getImageTicket = async (req, res) => {
+    const ticketId = parseInt(req.params.ticketId, 10); 
 
     try {
-        // Obtener el ticket con el id más alto para el usuario dado
         const ticket = await prisma.tiqueteria.findFirst({
             where: {
-                usuarioId: userId,
-            },
-            orderBy: {
-                id: 'desc', // Ordena por id de manera descendente
+                id: ticketId,
             },
             include: {
                 Dni: true,
@@ -34,22 +29,17 @@ exports.getTicket = async (req, res) => {
             return res.status(404).json({ message: 'Ticket, DNI, o foto no encontrado' });
         }
 
-        const command = new GetObjectCommand({
+        // Generar una URL firmada para la imagen de S3
+        const commandFrente = new GetObjectCommand({
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: ticket.Dni.fotoFrente,
         });
 
-        const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-          // Generar las URLs firmadas para las dos imágenes
-          const commandFrente = new GetObjectCommand({
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: ticket.Dni.fotoFrente,
-        });
-        return res.json({ fotoFrenteUrl: signedUrl });
+        const signedUrlFrente = await getSignedUrl(s3Client, commandFrente, { expiresIn: 3600 });
+
+        return res.json({ fotoFrenteUrl: signedUrlFrente });
     } catch (error) {
         console.error('Error devolviendo ticket:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        return res.status(500).json({ message: 'Error interno del servidor' });
     }
 };
-
-

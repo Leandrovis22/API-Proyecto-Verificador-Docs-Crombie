@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const { GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
-const s3Client = require('../config/s3');
+const s3Client = require('../../config/s3Config');
 
 const prisma = new PrismaClient();
 exports.getTickets = async (req, res) => {

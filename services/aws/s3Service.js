@@ -1,42 +1,62 @@
-const { PutObjectCommand } = require("@aws-sdk/client-s3");
-const sharp = require("sharp");
-const path = require("path");
-const s3Client = require("./config/s3");
-const { deleteFile, deleteFiles } = require("./s3Utils");
+const path = require('path');
+const S3Commands = require('./s3Commands');
 
 class S3Service {
-  async uploadImage(file, dni) {
+  constructor(bucketName) {
+    this.bucketName = bucketName;
+  }
+
+  generateFileName(file, dni) {
     const fileExtension = path.extname(file.originalname);
-    const fileName = `${dni}-${Date.now()}${fileExtension}`;
+    return `${dni}-${Date.now()}${fileExtension}`;
+  }
 
-    const compressedImageBuffer = await sharp(file.buffer)
-      .resize(600)
-      .jpeg({ quality: 80 })
-      .toBuffer();
-
-    const uploadParams = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: fileName,
-      Body: compressedImageBuffer,
-      ContentType: file.mimetype,
-    };
-
+  async uploadImage(file, dni) {
     try {
-      await s3Client.send(new PutObjectCommand(uploadParams));
+      const fileName = this.generateFileName(file, dni);
+      const compressedImage = await S3Commands.compressImage(file.buffer);
+
+      await S3Commands.putObject(
+        this.bucketName,
+        fileName,
+        compressedImage,
+        file.mimetype
+      );
+
       return fileName;
-    } catch (err) {
-      console.error("Error al subir el archivo a S3:", err);
-      throw new Error("Error al subir el archivo a S3");
+    } catch (error) {
+      console.error('Error en uploadImage:', error);
+      throw new Error('Error al subir la imagen a S3');
     }
   }
 
   async deleteFile(fileName) {
-    return await deleteFile(fileName);
+    try {
+      if (!fileName) return;
+      await S3Commands.deleteObject(this.bucketName, fileName);
+    } catch (error) {
+      console.error('Error en deleteFile:', error);
+      throw new Error('Error al eliminar el archivo de S3');
+    }
   }
 
-  async deleteFiles(bucketName, fileNames) {
-    return await deleteFiles(bucketName, fileNames);
+  async deleteFiles(fileNames) {
+    try {
+      if (!Array.isArray(fileNames)) {
+        throw new TypeError('fileNames debe ser un array');
+      }
+
+      const deletePromises = fileNames
+        .filter(fileName => fileName)
+        .map(fileName => this.deleteFile(fileName));
+
+      await Promise.all(deletePromises);
+    } catch (error) {
+      console.error('Error en deleteFiles:', error);
+      throw new Error('Error al eliminar múltiples archivos de S3');
+    }
   }
 }
 
-module.exports = new S3Service();
+module.exports = new S3Service(process.env.AWS_BUCKET_NAME);
+

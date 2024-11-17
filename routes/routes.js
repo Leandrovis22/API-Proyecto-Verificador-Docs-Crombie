@@ -14,7 +14,7 @@ const { actualizarUsuario, obtenerUsuarios } = require('../controllers/adminCont
 router.get('/user', authenticateToken, userController.getUser);
 
 // Ruta para actualizar un usuario solo como admin
-router.put('/user', authenticateToken, actualizarUsuario); // Agregar permitir al admin cambiar la contraseña del usuario?
+router.put('/user', authenticateToken, actualizarUsuario); // Agregar respuesta de que ocurrio mal cuando campos ya existen en otro usuario
 
 // Ruta para obtener todos los usuarios como admin
 router.get('/users', authenticateToken, obtenerUsuarios);

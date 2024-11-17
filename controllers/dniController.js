@@ -1,11 +1,10 @@
+// controllers/dniController.js
+
 const { PrismaClient } = require("@prisma/client");
-const { analyzeImageWithTextract } = require("../utils/textractUtils");
-const { verificarDatos } = require("../utils/verificationUtils");
+const { uploadMiddleware } = require("../config/multer");
+const { processImages } = require("../services/dniProcessingService");
 
 const prisma = new PrismaClient();
-
-const { uploadMiddleware } = require("../config/multer");
-const { uploadImage } = require("../services/aws/s3Service");
 
 exports.processDNI = async (req, res) => {
   uploadMiddleware(req, res, async (err) => {
@@ -14,11 +13,11 @@ exports.processDNI = async (req, res) => {
     }
 
     try {
-      const userId = parseInt(req.user.id, 10); 
+      const userId = parseInt(req.user.id, 10);
 
       const usuario = await prisma.usuario.findUnique({
         where: {
-          id: userId, 
+          id: userId,
         },
       });
 
@@ -48,6 +47,8 @@ exports.processDNI = async (req, res) => {
         },
       });
 
+      console.log(ticket.id, usuario, req.files);
+
       setImmediate(() => processImages(ticket.id, usuario, req.files));
 
       res.status(200).json({ message: "Ticket creado y en proceso" });
@@ -58,87 +59,4 @@ exports.processDNI = async (req, res) => {
         .json({ error: "Error en el proceso de creación del ticket" });
     }
   });
-};
-
-const processImages = async (ticketId, usuario, files) => {
-  try {
-    let dniFotoDelanteFileName = null;
-    let dniFotoDetrasFileName = null;
-
-    if (files) {
-      if (files["dni_foto_delante"] && files["dni_foto_delante"][0]) {
-        const fileDelante = files["dni_foto_delante"][0];
-        dniFotoDelanteFileName = await uploadImage(
-          fileDelante,
-          usuario.dni.toString()
-        );
-      }
-
-      if (files["dni_foto_detras"] && files["dni_foto_detras"][0]) {
-        const fileDetras = files["dni_foto_detras"][0];
-        dniFotoDetrasFileName = await uploadImage(
-          fileDetras,
-          usuario.dni.toString()
-        );
-      }
-    } else {
-      throw new Error("No se encontraron imágenes para procesar");
-    }
-
-    let dniFotoDelanteText = "";
-    let dniFotoDetrasText = "";
-
-    if (dniFotoDelanteFileName) {
-      dniFotoDelanteText = await analyzeImageWithTextract(
-        process.env.AWS_BUCKET_NAME,
-        dniFotoDelanteFileName
-      );
-    }
-
-    if (dniFotoDetrasFileName) {
-      dniFotoDetrasText = await analyzeImageWithTextract(
-        process.env.AWS_BUCKET_NAME,
-        dniFotoDetrasFileName
-      );
-    }
-
-    const resTextract = {
-      frente: dniFotoDelanteText,
-      detras: dniFotoDetrasText,
-    };
-
-    await prisma.dni.create({
-      data: {
-        fotoFrente: dniFotoDelanteFileName,
-        fotoDetras: dniFotoDetrasFileName,
-        resTextract: resTextract,
-        tiqueteriaId: ticketId,
-      },
-    });
-
-    const resultadoVerificacion = await verificarDatos(
-      dniFotoDelanteText,
-      dniFotoDetrasText,
-      {
-        nombre: usuario.nombre,
-        apellido: usuario.apellido,
-        dni: usuario.dni.toString(),
-        cuil: usuario.cuil,
-      }
-    );
-
-    await prisma.tiqueteria.update({
-      where: { id: ticketId },
-      data: {
-        estado: resultadoVerificacion.valido ? "completado" : "fallido",
-        resultado: resultadoVerificacion,
-      },
-    });
-  } catch (err) {
-    console.error("Error en el procesamiento:", err);
-    await prisma.tiqueteria.update({
-      where: { id: ticketId },
-      data: { estado: "fallido", msqError: err.message },
-    });
-  }
 };

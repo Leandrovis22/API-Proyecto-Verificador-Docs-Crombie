@@ -1,65 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
 const { analyzeImageWithTextract } = require("../utils/textractUtils");
-const multer = require("multer");
-const sharp = require("sharp"); 
 const { verificarDatos } = require("../utils/verificationUtils");
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-const path = require("path");
 
 const prisma = new PrismaClient();
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, 
-  fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith("image/")) {
-      return cb(new Error("Solo se permiten imágenes."));
-    }
-    cb(null, true);
-  },
-});
-
-
-const uploadMiddleware = upload.fields([
-  { name: "dni_foto_delante", maxCount: 1 },
-  { name: "dni_foto_detras", maxCount: 1 },
-]);
-
-// Configura AWS para S3
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
-
-
-const uploadToS3 = async (file, dni) => {
-  const fileExtension = path.extname(file.originalname);
-  const fileName = `${dni}-${Date.now()}${fileExtension}`;
-
-
-  const compressedImageBuffer = await sharp(file.buffer)
-    .resize(600) 
-    .jpeg({ quality: 80 }) 
-    .toBuffer();
-
-  const uploadParams = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: fileName,
-    Body: compressedImageBuffer,
-    ContentType: file.mimetype,
-  };
-
-  try {
-    await s3Client.send(new PutObjectCommand(uploadParams));
-    return fileName;
-  } catch (err) {
-    console.error("Error al subir el archivo a S3:", err);
-    throw new Error("Error al subir el archivo a S3");
-  }
-};
+const { uploadMiddleware } = require("../config/multer");
+const { uploadImage } = require("../services/aws/s3Service");
 
 exports.processDNI = async (req, res) => {
   uploadMiddleware(req, res, async (err) => {
@@ -122,7 +68,7 @@ const processImages = async (ticketId, usuario, files) => {
     if (files) {
       if (files["dni_foto_delante"] && files["dni_foto_delante"][0]) {
         const fileDelante = files["dni_foto_delante"][0];
-        dniFotoDelanteFileName = await uploadToS3(
+        dniFotoDelanteFileName = await uploadImage(
           fileDelante,
           usuario.dni.toString()
         );
@@ -130,7 +76,7 @@ const processImages = async (ticketId, usuario, files) => {
 
       if (files["dni_foto_detras"] && files["dni_foto_detras"][0]) {
         const fileDetras = files["dni_foto_detras"][0];
-        dniFotoDetrasFileName = await uploadToS3(
+        dniFotoDetrasFileName = await uploadImage(
           fileDetras,
           usuario.dni.toString()
         );

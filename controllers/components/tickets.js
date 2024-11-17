@@ -1,15 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
-const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
-// Configura AWS S3
-const s3Client = new S3Client({
-    region: process.env.AWS_REGION,
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    },
-});
+const s3Client = require('../config/s3');
 
 const prisma = new PrismaClient();
 exports.getTickets = async (req, res) => {

@@ -1,0 +1,420 @@
+{
+	"info": {
+		"_postman_id": "e1f679cc-8d34-4219-babf-1fe6a062a2ab",
+		"name": "API CROMBIE NEW",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26623480"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Leandro Ezequiel\",\r\n  \"apellido\": \"Viscolungo\",\r\n  \"dni\": \"42612132\",\r\n  \"cuil\": \"20-42612132-9\",\r\n  \"correo\": \"leand00000000001234@gmail.com\",\r\n  \"password\": \"1234\",\r\n  \"telefono\": \"3424341991\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/auth/register",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"dni\": \"42612132\",\r\n  \"password\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/auth/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI2Iiwicm9sIjoidXN1YXJpbyIsImlhdCI6MTczMTg2NjMyNCwiZXhwIjoxNzMxODY4MTI0fQ.pqlNFnr2icSQD6GS02RiF2UAtq2RY7ORNRqn7r92L6s",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "put user (Actualizar user)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI1Iiwicm9sIjoiYWRtaW4iLCJpYXQiOjE3MzE4NjU5NTcsImV4cCI6MTczMTg2Nzc1N30.hghhx0Vt4YXCz2ZWvw7ttgmy9sctflcua0vrpUukeJE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"usuarioId\": 26,\r\n  \"nombre\": \"Leandro Ezequiel\",\r\n  \"apellido\": \"Viscolungo\",\r\n  \"dni\": \"42612732\",\r\n  \"cuil\": \"20-42612132-8\",\r\n  \"correo\": \"leand0000000000134@gmail.com\",\r\n  \"telefono\": \"555-123456\",\r\n  \"rol\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI1Iiwicm9sIjoiYWtaW4iLCJpYXQiOjE3MzE4NjU5NTcsImV4cCI6MTczMTg2Nzc1N30.hghhx0Vt4YXCz2ZWvw7ttgmy9sctflcua0vrpUukeJE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "forgot-password",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"correo\": \"leand00000000001234@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/forgot-password",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"forgot-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/reset-password/:",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTcyOTYyOTEzOSwiZXhwIjoxNzI5NjMwOTM5fQ.crpzSiVXtPDQb_IR6_gOW82OMGMMsQYMYxuhgOYgC6g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"newPassword\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTczMTg2NzM0NywiZXhwIjoxNzMxODcwOTQ3fQ.qH86DKgjWLh3juIfiQQ3SVJxe3K9XJmEaHZewn4ap_8",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reset-password",
+						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTczMTg2NzM0NywiZXhwIjoxNzMxODcwOTQ3fQ.qH86DKgjWLh3juIfiQQ3SVJxe3K9XJmEaHZewn4ap_8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "enviar dni",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODcwMzY3LCJleHAiOjE3MzE4NzIxNjd9.Allwz8TvFZI1J09fiJsbb95SrAWzAfgasfzFUL5AQBk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "dni_foto_detras",
+							"type": "file",
+							"src": "/C:/Users/leand/Downloads/dnileandrodetras.jpg"
+						},
+						{
+							"key": "dni_foto_delante",
+							"type": "file",
+							"src": "/C:/Users/leand/Downloads/dnileandrofrente.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/process-dni",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"process-dni"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener imagen",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODczNDg2LCJleHAiOjE3MzE4NzUyODZ9.lYyG7zGHSPHQTZNvC9l02CiCniY0toeujyUYr5pUdUg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/image/309",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"image",
+						"309"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener imagenes de /check",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODczNDg2LCJleHAiOjE3MzE4NzUyODZ9.lYyG7zGHSPHQTZNvC9l02CiCniY0toeujyUYr5pUdUg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/tickets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener la respuesta check-data",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODczNDg2LCJleHAiOjE3MzE4NzUyODZ9.lYyG7zGHSPHQTZNvC9l02CiCniY0toeujyUYr5pUdUg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/check-data",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"check-data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener todos los tickets de user o admin",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODczNDg2LCJleHAiOjE3MzE4NzUyODZ9.lYyG7zGHSPHQTZNvC9l02CiCniY0toeujyUYr5pUdUg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/tiqueteria",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tiqueteria"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

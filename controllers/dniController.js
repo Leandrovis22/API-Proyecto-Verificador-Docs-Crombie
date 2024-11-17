@@ -47,8 +47,6 @@ exports.processDNI = async (req, res) => {
         },
       });
 
-      console.log(ticket.id, usuario, req.files);
-
       setImmediate(() => processImages(ticket.id, usuario, req.files));
 
       res.status(200).json({ message: "Ticket creado y en proceso" });

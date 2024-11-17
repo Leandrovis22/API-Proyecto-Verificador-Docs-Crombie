@@ -58,5 +58,13 @@ class S3Service {
   }
 }
 
-module.exports = new S3Service(process.env.AWS_BUCKET_NAME);
+// Create a single instance with the bucket name
+const s3Service = new S3Service(process.env.AWS_BUCKET_NAME);
 
+// Export both the class and the instance
+module.exports = {
+  S3Service,
+  uploadImage: (file, dni) => s3Service.uploadImage(file, dni),
+  deleteFile: (fileName) => s3Service.deleteFile(fileName),
+  deleteFiles: (fileNames) => s3Service.deleteFiles(fileNames),
+};

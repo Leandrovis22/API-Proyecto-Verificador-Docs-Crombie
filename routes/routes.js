@@ -25,14 +25,16 @@ router.post('/forgot-password', sendResetPasswordEmail);
 // Ruta para restablecer la contraseña usando el link anterior
 router.post('/reset-password/:token', resetPassword);
 
+// Ruta para enviar dni frente y dorso, comienza la validación
 router.post('/process-dni', authenticateToken, dniController.processDNI);
 
-// Ruta para obtener una imagen url solo de dni frente de una sola persona a la vez
+// Ruta para obtener una imagen url solo de dni frente de un ticket
 router.get('/image/:ticketId', authenticateToken, getImageTicket);
 
-// Ruta para obtener las dos imagenes url del dni frente y detras de una sola persona a la vez
+// Ruta para obtener las dos imagenes url del dni frente y detras de una sola persona, del ticket actual
 router.get('/tickets', authenticateToken, getTickets)
 
+// Ruta para obtener el resultado de la validación (arreglo de true, false)
 router.get('/check-data', authenticateToken, checkController.checkData);
 
 // Ruta para obtener un ticket o todos los tickets segun rol, solo datos no imagenes

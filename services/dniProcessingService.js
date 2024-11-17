@@ -11,16 +11,16 @@ async function processImages(ticketId, usuario, files) {
         let dniFotoDetrasFileName = null;
 
         if (files) {
-            if (files["dni_foto_delante"] && files["dni_foto_delante"][0]) {
-                const fileDelante = files["dni_foto_delante"][0];
+            if (files.dni_foto_delante && files.dni_foto_delante[0]) {
+                const fileDelante = files.dni_foto_delante[0];
                 dniFotoDelanteFileName = await uploadImage(
                     fileDelante,
                     usuario.dni.toString()
                 );
             }
 
-            if (files["dni_foto_detras"] && files["dni_foto_detras"][0]) {
-                const fileDetras = files["dni_foto_detras"][0];
+            if (files.dni_foto_detras && files.dni_foto_detras[0]) {
+                const fileDetras = files.dni_foto_detras[0];
                 dniFotoDetrasFileName = await uploadImage(
                     fileDetras,
                     usuario.dni.toString()

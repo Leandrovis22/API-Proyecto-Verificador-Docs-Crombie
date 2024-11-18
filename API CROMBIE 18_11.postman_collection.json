@@ -70,7 +70,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI2Iiwicm9sIjoidXN1YXJpbyIsImlhdCI6MTczMTg2NjMyNCwiZXhwIjoxNzMxODY4MTI0fQ.pqlNFnr2icSQD6GS02RiF2UAtq2RY7ORNRqn7r92L6s",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI4Iiwicm9sIjoidXN1YXJpbyIsImlhdCI6MTczMTg5MjAyMSwiZXhwIjoxNzMxODkzODIxfQ.aAig8m0HeEVn5vOANqKWQQSgMVCBPDxzznpvnCamGmU",
 							"type": "string"
 						}
 					]
@@ -99,7 +99,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI1Iiwicm9sIjoiYWRtaW4iLCJpYXQiOjE3MzE4NjU5NTcsImV4cCI6MTczMTg2Nzc1N30.hghhx0Vt4YXCz2ZWvw7ttgmy9sctflcua0vrpUukeJE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTczMTkzMzk5NCwiZXhwIjoxNzMxOTM1Nzk0fQ._vKRxnrH79WNzOj8PeYB8UPoqFL7STp1Ylbwop2_UHI",
 							"type": "string"
 						}
 					]
@@ -108,7 +108,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"usuarioId\": 26,\r\n  \"nombre\": \"Leandro Ezequiel\",\r\n  \"apellido\": \"Viscolungo\",\r\n  \"dni\": \"42612732\",\r\n  \"cuil\": \"20-42612132-8\",\r\n  \"correo\": \"leand0000000000134@gmail.com\",\r\n  \"telefono\": \"555-123456\",\r\n  \"rol\": \"admin\"\r\n}",
+					"raw": "{\r\n  \"usuarioId\": 3,\r\n  \"nombre\": \"Leandro Ezequiel\",\r\n  \"apellido\": \"Viscolungo\",\r\n  \"dni\": \"42612732\",\r\n  \"cuil\": \"20-42612132-8\",\r\n  \"correo\": \"leand0000000000134@gmail.com\",\r\n  \"telefono\": \"5551234566\",\r\n  \"rol\": \"admin\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -137,7 +137,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI1Iiwicm9sIjoiYWtaW4iLCJpYXQiOjE3MzE4NjU5NTcsImV4cCI6MTczMTg2Nzc1N30.hghhx0Vt4YXCz2ZWvw7ttgmy9sctflcua0vrpUukeJE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTczMTg5MjQ1NywiZXhwIjoxNzMxODk0MjU3fQ.yEnVEGc8Fywy4uojtcawBTad7YXqj_O527CT4VE3XnM",
 							"type": "string"
 						}
 					]
@@ -214,7 +214,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:3000/api/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTczMTg2NzM0NywiZXhwIjoxNzMxODcwOTQ3fQ.qH86DKgjWLh3juIfiQQ3SVJxe3K9XJmEaHZewn4ap_8",
+					"raw": "localhost:3000/api/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTczMTg5MjU1MSwiZXhwIjoxNzMxODk2MTUxfQ.X2qOmRVFMN4ru8QUSrULxBzCMdu7Wk02yds3vCDNh_8",
 					"host": [
 						"localhost"
 					],
@@ -222,7 +222,7 @@
 					"path": [
 						"api",
 						"reset-password",
-						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTczMTg2NzM0NywiZXhwIjoxNzMxODcwOTQ3fQ.qH86DKgjWLh3juIfiQQ3SVJxe3K9XJmEaHZewn4ap_8"
+						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJsZWFuZDAwMDAwMDAwMDAxMjM0QGdtYWlsLmNvbSIsImlhdCI6MTczMTg5MjU1MSwiZXhwIjoxNzMxODk2MTUxfQ.X2qOmRVFMN4ru8QUSrULxBzCMdu7Wk02yds3vCDNh_8"
 					]
 				}
 			},
@@ -236,7 +236,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODcwMzY3LCJleHAiOjE3MzE4NzIxNjd9.Allwz8TvFZI1J09fiJsbb95SrAWzAfgasfzFUL5AQBk",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTczMTg5MzMzMSwiZXhwIjoxNzMxODk1MTMxfQ.neju8rB3Erygml1JiqorK-hHUzZFzmszVa2nMK8MXNw",
 							"type": "string"
 						}
 					]
@@ -281,7 +281,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODczNDg2LCJleHAiOjE3MzE4NzUyODZ9.lYyG7zGHSPHQTZNvC9l02CiCniY0toeujyUYr5pUdUg",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTczMTg5MzMzMSwiZXhwIjoxNzMxODk1MTMxfQ.neju8rB3Erygml1JiqorK-hHUzZFzmszVa2nMK8MXNw",
 							"type": "string"
 						}
 					]
@@ -289,7 +289,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/image/309",
+					"raw": "http://localhost:3000/api/image/314",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -298,7 +298,7 @@
 					"path": [
 						"api",
 						"image",
-						"309"
+						"314"
 					]
 				}
 			},
@@ -312,7 +312,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODczNDg2LCJleHAiOjE3MzE4NzUyODZ9.lYyG7zGHSPHQTZNvC9l02CiCniY0toeujyUYr5pUdUg",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTczMTg5MzMzMSwiZXhwIjoxNzMxODk1MTMxfQ.neju8rB3Erygml1JiqorK-hHUzZFzmszVa2nMK8MXNw",
 							"type": "string"
 						}
 					]
@@ -345,7 +345,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODczNDg2LCJleHAiOjE3MzE4NzUyODZ9.lYyG7zGHSPHQTZNvC9l02CiCniY0toeujyUYr5pUdUg",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTczMTg5MzMzMSwiZXhwIjoxNzMxODk1MTMxfQ.neju8rB3Erygml1JiqorK-hHUzZFzmszVa2nMK8MXNw",
 							"type": "string"
 						}
 					]
@@ -386,7 +386,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJ1c3VhcmlvIiwiaWF0IjoxNzMxODczNDg2LCJleHAiOjE3MzE4NzUyODZ9.lYyG7zGHSPHQTZNvC9l02CiCniY0toeujyUYr5pUdUg",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTczMTg5MzMzMSwiZXhwIjoxNzMxODk1MTMxfQ.neju8rB3Erygml1JiqorK-hHUzZFzmszVa2nMK8MXNw",
 							"type": "string"
 						}
 					]
@@ -411,6 +411,81 @@
 					"path": [
 						"api",
 						"tiqueteria"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar ticket",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTczMTk0MzkwNCwiZXhwIjoxNzMxOTQ1NzA0fQ.ZjM1uiM_KvTV8GNj_IWA9bc2YqW8__0rJITc9yGo2yQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "dni_foto_delante",
+							"type": "file",
+							"src": "/C:/Users/leand/Downloads/dnileandrofrente.jpg"
+						},
+						{
+							"key": "dni_foto_detras",
+							"type": "file",
+							"src": "/C:/Users/leand/Downloads/dnileandrodetras.jpg"
+						},
+						{
+							"key": "nombre",
+							"value": "Leandro",
+							"type": "text"
+						},
+						{
+							"key": "apellido",
+							"value": "Viscolungo",
+							"type": "text"
+						},
+						{
+							"key": "dni",
+							"value": "42612132",
+							"type": "text"
+						},
+						{
+							"key": "cuil",
+							"value": "20-42612132-9",
+							"type": "text"
+						},
+						{
+							"key": "correo",
+							"value": "monica@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "telefono",
+							"value": "3424341917",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/api/ticket/318",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"ticket",
+						"318"
 					]
 				}
 			},

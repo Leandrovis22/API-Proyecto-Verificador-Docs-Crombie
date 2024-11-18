@@ -38,7 +38,7 @@ router.get('/tickets', authenticateToken, getTickets)
 router.get('/check-data', authenticateToken, checkController.checkData);
 
 // Ruta para obtener un ticket o todos los tickets segun rol, solo datos no imagenes
-router.get('/tiqueteria', authenticateToken, Tiqueteria.Tiqueteria); // Hay que modificar de  resultado: ticket.msqError, a resultado: ticket.resultado, 
+router.get('/tiqueteria', authenticateToken, Tiqueteria.Tiqueteria);
 
 
 module.exports = router;

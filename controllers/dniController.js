@@ -1,5 +1,3 @@
-// controllers/dniController.js
-
 const { PrismaClient } = require("@prisma/client");
 const { uploadMiddleware } = require("../config/multer");
 const { processImages } = require("../services/dniProcessingService");

@@ -1,5 +1,3 @@
-// services/verificationUtils.js
-
 function normalizarCadena(cadena) {
     return cadena.toLowerCase().replace(/[^a-zA-Z0-9\s]/g, '');
 }
@@ -8,7 +6,7 @@ function normalizarDNI(dni) {
     return dni.replace(/\./g, '');
 }
 
-function extraerFechasNacimiento(frente) {
+function extraerFechaNacimiento(frente) {
         // Buscar la fecha que viene después de "Date of birth"
         const regex = /Date of birth[^\d]*(\d{2})\s+([A-Z]{3})[^\d]*(\d{4})/;
         const match = frente.match(regex);
@@ -74,11 +72,11 @@ async function verificarDatos(frente, detras, requestData) {
     const dniFrenteNormalizado = normalizarDNI(frente);
     const dniDetrasNormalizado = normalizarDNI(detras);
 
-    // Extraer todas las fechas de nacimiento posibles del texto extraído
-    const fechasExtraidas = extraerFechasNacimiento(frente);
+    // Extraer la fecha de nacimiento del texto extraído
+    const fechaExtraida = extraerFechaNacimiento(frente);
 
     // Verificar si la persona es mayor o igual a 18 años
-    const edadValida = esMayorDeEdad(fechasExtraidas);
+    const edadValida = esMayorDeEdad(fechaExtraida);
 
     // Normalizar el nombre del request
     const nombreNormalizado = normalizarCadena(nombre);
@@ -107,7 +105,6 @@ async function verificarDatos(frente, detras, requestData) {
     const todosValidos = primerNombreCoincide && segundoNombreCoincide && apellidoCoincide &&
         dniEsValido && dniCoincide && cuilEsValido && cuilCoincide && edadValida;
 
-    // Retorno con los resultados
     return {
         primerNombre: {
             valido: primerNombreCoincide,

@@ -18,7 +18,6 @@ exports.Tiqueteria = async (req, res) => {
         let tiquets;
 
         if (usuario.rol === "admin") {
-            // Si es admin traer todos los tiquets junto con la información del usuario (incluyendo el DNI
             tiquets = await prisma.tiqueteria.findMany({
                 include: {
                     Usuario: true, 

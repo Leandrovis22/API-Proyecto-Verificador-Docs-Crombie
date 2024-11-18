@@ -6,13 +6,11 @@ const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
 
-  const { nombre,apellido, dni, cuil, correo, password, telefono} = req.body;
+  const { nombre, apellido, dni, cuil, correo, password, telefono} = req.body;
 
   if (!dni || !correo || !password) {
     return res.status(400).json({ error: 'DNI, correo y contraseña son requeridos' });
   }
-
-  
 
   const existingUser = await prisma.usuario.findFirst({
     where: {

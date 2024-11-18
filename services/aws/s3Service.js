@@ -1,20 +1,20 @@
 const path = require('path');
 const S3Commands = require('./s3Commands');
+const sharp = require('sharp');
 
 class S3Service {
   constructor(bucketName) {
     this.bucketName = bucketName;
   }
 
-  generateFileName(file, dni) {
-    const fileExtension = path.extname(file.originalname);
-    return `${dni}-${Date.now()}${fileExtension}`;
-  }
-
   async uploadImage(file, dni) {
     try {
-      const fileName = this.generateFileName(file, dni);
-      const compressedImage = await S3Commands.compressImage(file.buffer);
+      const fileExtension = path.extname(file.originalname);
+      const fileName = `${dni}-${Date.now()}${fileExtension}`;
+      const compressedImage = await sharp(file.buffer)
+        .resize(600)
+        .jpeg({ quality: 80 })
+        .toBuffer();
 
       await S3Commands.putObject(
         this.bucketName,
@@ -58,10 +58,8 @@ class S3Service {
   }
 }
 
-// Create a single instance with the bucket name
 const s3Service = new S3Service(process.env.AWS_BUCKET_NAME);
 
-// Export both the class and the instance
 module.exports = {
   S3Service,
   uploadImage: (file, dni) => s3Service.uploadImage(file, dni),

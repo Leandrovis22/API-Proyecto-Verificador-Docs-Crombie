@@ -17,6 +17,5 @@ const uploadMiddleware = upload.fields([
 ]);
 
 module.exports = {
-  upload,
   uploadMiddleware
 };

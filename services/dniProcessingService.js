@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
-const { analyzeImageWithTextract } = require("./aws/textractUtils");
+const { analyzeImageWithTextract } = require("./aws/textractService");
 const { uploadImage } = require("./aws/s3Service");
-const { verificarDatos } = require("./verificationUtils");
+const { verificarDatos } = require("./verifyService");
 
 const prisma = new PrismaClient();
 

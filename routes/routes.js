@@ -40,5 +40,6 @@ router.get('/check-data', authenticateToken, checkController.checkData);
 // Ruta para obtener un ticket o todos los tickets segun rol, solo datos no imagenes
 router.get('/tiqueteria', authenticateToken, Tiqueteria.Tiqueteria);
 
+router.put('/ticket/:ticketId', authenticateToken, Tiqueteria.updateTicket);
 
 module.exports = router;

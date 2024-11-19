@@ -4,18 +4,16 @@ const app = express();
 const routes = require('./routes/routes');
 const authRouter = require('./routes/authRouter');
 
-// Configuración de CORS
 app.use(cors({
-  origin: '*', // Permite cualquier origen
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
-  allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
-  maxAge: 86400, // Cache preflight request por 24 horas
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400,
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Usar las rutas
 app.use('/api', routes);
 app.use('/auth', authRouter);
 

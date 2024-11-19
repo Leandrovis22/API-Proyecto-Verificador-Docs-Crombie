@@ -2,6 +2,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
+const dotenv = require("dotenv").config;
 
 const prisma = new PrismaClient();
 
@@ -10,8 +11,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "siproyecto0@gmail.com",
-    pass: "yqcg ixvn fxrp umir",
+    user: "proccess.env.EMAIL",
+    pass: "proccess.env.EMAIL_PASSWORD",
   },
 });
 

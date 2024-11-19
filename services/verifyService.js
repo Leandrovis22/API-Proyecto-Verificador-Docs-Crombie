@@ -1,29 +1,12 @@
-// /Utils/verificationUtils.js
-
-/**
- * Normaliza una cadena eliminando caracteres especiales y convirtiendo a minúsculas.
- * @param {string} cadena - La cadena a normalizar.
- * @returns {string} La cadena normalizada.
- */
 function normalizarCadena(cadena) {
     return cadena.toLowerCase().replace(/[^a-zA-Z0-9\s]/g, '');
 }
 
-/**
- * Normaliza el DNI eliminando puntos.
- * @param {string} dni - El DNI a normalizar.
- * @returns {string} El DNI sin puntos.
- */
 function normalizarDNI(dni) {
     return dni.replace(/\./g, '');
 }
 
-/**
- * Extrae todas las fechas de nacimiento posibles del texto extraído.
- * @param {string} texto - Texto del que se extraerán las fechas.
- * @returns {Array} Array de objetos con día, mes y año extraídos.
- */
-function extraerFechasNacimiento(frente) {
+function extraerFechaNacimiento(frente) {
         // Buscar la fecha que viene después de "Date of birth"
         const regex = /Date of birth[^\d]*(\d{2})\s+([A-Z]{3})[^\d]*(\d{4})/;
         const match = frente.match(regex);
@@ -40,11 +23,6 @@ function extraerFechasNacimiento(frente) {
         return null;
     }
 
-/**
- * Convierte un mes abreviado en español a su número correspondiente.
- * @param {string} mes - Mes en formato abreviado (ENE, FEB, etc.).
- * @returns {number} El número del mes (1 para enero, 2 para febrero, etc.).
- */
 function convertirMes(mes) {
     const meses = {
         'ENE': 1, 'FEB': 2, 'MAR': 3, 'ABR': 4, 'MAY': 5, 'JUN': 6,
@@ -86,15 +64,6 @@ function esMayorDeEdad(fecha) {
     return edad >= 18;
 }
 
-/**
- * @param {string} frente - Texto extraído del frente del documento.
- * @param {string} detras - Texto extraído del dorso del documento.
- * @param {object} requestData - Datos proporcionados en el request.
- * @param {string} requestData.nombre - Nombre proporcionado en el request.
- * @param {string} requestData.dni - DNI proporcionado en el request.
- * @param {string} requestData.cuil - CUIL proporcionado en el request.
- * @returns {object} Resultado de la verificación.
- */
 async function verificarDatos(frente, detras, requestData) {
     const { nombre, apellido, dni, cuil } = requestData;
 
@@ -103,11 +72,11 @@ async function verificarDatos(frente, detras, requestData) {
     const dniFrenteNormalizado = normalizarDNI(frente);
     const dniDetrasNormalizado = normalizarDNI(detras);
 
-    // Extraer todas las fechas de nacimiento posibles del texto extraído
-    const fechasExtraidas = extraerFechasNacimiento(frente);
+    // Extraer la fecha de nacimiento del texto extraído
+    const fechaExtraida = extraerFechaNacimiento(frente);
 
     // Verificar si la persona es mayor o igual a 18 años
-    const edadValida = esMayorDeEdad(fechasExtraidas);
+    const edadValida = esMayorDeEdad(fechaExtraida);
 
     // Normalizar el nombre del request
     const nombreNormalizado = normalizarCadena(nombre);
@@ -136,7 +105,6 @@ async function verificarDatos(frente, detras, requestData) {
     const todosValidos = primerNombreCoincide && segundoNombreCoincide && apellidoCoincide &&
         dniEsValido && dniCoincide && cuilEsValido && cuilCoincide && edadValida;
 
-    // Retorno con los resultados
     return {
         primerNombre: {
             valido: primerNombreCoincide,

@@ -14,7 +14,7 @@ const { actualizarUsuario, obtenerUsuarios } = require('../controllers/adminCont
 router.get('/user', authenticateToken, userController.getUser);
 
 // Ruta para actualizar un usuario solo como admin
-router.put('/user', authenticateToken, actualizarUsuario); // Agregar permitir al admin cambiar la contraseña del usuario?
+router.put('/user', authenticateToken, actualizarUsuario); // Agregar respuesta de que ocurrio mal cuando campos ya existen en otro usuario
 
 // Ruta para obtener todos los usuarios como admin
 router.get('/users', authenticateToken, obtenerUsuarios);
@@ -25,18 +25,21 @@ router.post('/forgot-password', sendResetPasswordEmail);
 // Ruta para restablecer la contraseña usando el link anterior
 router.post('/reset-password/:token', resetPassword);
 
+// Ruta para enviar dni frente y dorso, comienza la validación
 router.post('/process-dni', authenticateToken, dniController.processDNI);
 
-// Ruta para obtener una imagen url solo de dni frente de una sola persona a la vez
+// Ruta para obtener una imagen url solo de dni frente de un ticket
 router.get('/image/:ticketId', authenticateToken, getImageTicket);
 
-// Ruta para obtener las dos imagenes url del dni frente y detras de una sola persona a la vez
+// Ruta para obtener las dos imagenes url del dni frente y detras de una sola persona, del ticket actual
 router.get('/tickets', authenticateToken, getTickets)
 
+// Ruta para obtener el resultado de la validación (arreglo de true, false)
 router.get('/check-data', authenticateToken, checkController.checkData);
 
 // Ruta para obtener un ticket o todos los tickets segun rol, solo datos no imagenes
-router.get('/tiqueteria', authenticateToken, Tiqueteria.Tiqueteria); // Hay que modificar de  resultado: ticket.msqError, a resultado: ticket.resultado, 
+router.get('/tiqueteria', authenticateToken, Tiqueteria.Tiqueteria);
 
+router.put('/ticket/:ticketId', authenticateToken, Tiqueteria.updateTicket);
 
 module.exports = router;

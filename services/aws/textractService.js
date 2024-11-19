@@ -1,4 +1,3 @@
-// textractUtils.js
 const { TextractClient, StartDocumentTextDetectionCommand, GetDocumentTextDetectionCommand } = require('@aws-sdk/client-textract');
 
 const textractClient = new TextractClient({

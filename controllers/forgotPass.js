@@ -2,8 +2,6 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
-const dotenv = require("dotenv").config;
-
 const prisma = new PrismaClient();
 
 const transporter = nodemailer.createTransport({

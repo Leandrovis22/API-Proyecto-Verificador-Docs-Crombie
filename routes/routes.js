@@ -5,10 +5,10 @@ const { authenticateToken } = require('../middlewares/authMiddleware');
 const userController = require('../controllers/userController');
 const checkController = require('../controllers/checkController');
 const { getImageTicket } = require('../controllers/components/imageTicket');
-const { getTickets } = require('../controllers/components/tickets');
 const Tiqueteria = require('../controllers/tiqueteriaController');
 const { sendResetPasswordEmail, resetPassword } = require('../controllers/forgotPass');
 const { actualizarUsuario, obtenerUsuarios } = require('../controllers/adminController');
+const { getImagesTicket } = require('../controllers/components/imagesTickets');
 
 // Ruta para obtener datos del usuario actual
 router.get('/user', authenticateToken, userController.getUser);
@@ -32,7 +32,7 @@ router.post('/process-dni', authenticateToken, dniController.processDNI);
 router.get('/image/:ticketId', authenticateToken, getImageTicket);
 
 // Ruta para obtener las dos imagenes url del dni frente y detras de una sola persona, del ticket actual
-router.get('/tickets', authenticateToken, getTickets)
+router.get('/images/:ticketId', authenticateToken, getImagesTicket)
 
 // Ruta para obtener el resultado de la validación (arreglo de true, false)
 router.get('/check-data', authenticateToken, checkController.checkData);

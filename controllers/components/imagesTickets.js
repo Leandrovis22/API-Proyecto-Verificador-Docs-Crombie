@@ -5,17 +5,14 @@ const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const s3Client = require('../../config/s3Config');
 
 const prisma = new PrismaClient();
-exports.getTickets = async (req, res) => {
-    const userId = parseInt(req.user.id, 10); // Se toma el ID del usuario del request
+
+exports.getImagesTicket = async (req, res) => {
+    const ticketId = parseInt(req.params.ticketId, 10); 
 
     try {
-        // Obtener el ticket con el id más alto para el usuario dado
         const ticket = await prisma.tiqueteria.findFirst({
             where: {
-                usuarioId: userId,
-            },
-            orderBy: {
-                id: 'desc', // Ordena por id de manera descendente
+                id: ticketId,
             },
             include: {
                 Dni: true,
@@ -26,7 +23,6 @@ exports.getTickets = async (req, res) => {
             return res.status(404).json({ message: 'Ticket, DNI, o fotos no encontrados' });
         }
 
-        // Generar las URLs firmadas para las dos imágenes
         const commandFrente = new GetObjectCommand({
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: ticket.Dni.fotoFrente,
@@ -45,6 +41,6 @@ exports.getTickets = async (req, res) => {
         });
     } catch (error) {
         console.error('Error devolviendo ticket:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        return res.status(500).json({ message: 'Error interno del servidor' });
     }
 };

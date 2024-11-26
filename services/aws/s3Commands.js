@@ -1,6 +1,5 @@
 const { DeleteObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
 const s3Client = require('../../config/s3Config');
-const sharp = require('sharp');
 
 class S3Commands {
   static async deleteObject(bucketName, fileName) {

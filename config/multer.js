@@ -16,6 +16,11 @@ const uploadMiddleware = upload.fields([
   { name: "dni_foto_detras", maxCount: 1 },
 ]);
 
+const uploadProfile = upload.fields([
+  { name: "profilePicture", maxCount: 1 },
+]);
+
 module.exports = {
-  uploadMiddleware
+  uploadMiddleware,
+  uploadProfile
 };

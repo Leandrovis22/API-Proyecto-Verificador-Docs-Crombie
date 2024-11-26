@@ -3,6 +3,10 @@ const prisma = new PrismaClient();  // Instancia PrismaClient
 const { hashPassword } = require('../middlewares/authMiddleware');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { GetObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const s3Client = require('../config/s3Config');
+
 
 exports.register = async (req, res) => {
 
@@ -47,6 +51,7 @@ exports.login = async (req, res) => {
   const { dni, password } = req.body;
 
   try {
+
     const user = await prisma.usuario.findUnique({
       where: { dni: dni }
     });
@@ -66,16 +71,38 @@ exports.login = async (req, res) => {
       { expiresIn: '30m' }
     );
 
-    const { password: _, createdAt, Tiqueterias, id, ...userData } = user;
-    console.log(token)
-    res.json({
+    let profilePictureUrl = null;
+    if (user.profilePicture) {
+      const command = new GetObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: user.profilePicture
+      });
+
+      profilePictureUrl = await getSignedUrl(s3Client, command, { 
+        expiresIn: 3600 
+      });
+    }
+
+    const userData = {
+      id: user.id,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      correo: user.correo,
+      dni: user.dni,
+      cuil: user.cuil,
+      telefono: user.telefono,
+      rol: user.rol,
+      profilePicture: profilePictureUrl
+    };
+
+    return res.json({
       message: 'Login exitoso',
       token: token,
       user: userData
     });
+
   } catch (error) {
     console.error('Error en el login:', error);
-    res.status(500).json({ error: 'Error en el login' });
+    return res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
-

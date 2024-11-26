@@ -7,10 +7,10 @@ class S3Service {
     this.bucketName = bucketName;
   }
 
-  async uploadImage(file, dni) {
+  async uploadImage(file, dni, prefix = '') {
     try {
       const fileExtension = path.extname(file.originalname);
-      const fileName = `${dni}-${Date.now()}${fileExtension}`;
+      const fileName = `${prefix}${dni}-${Date.now()}${fileExtension}`;
       const compressedImage = await sharp(file.buffer)
         .resize(600)
         .jpeg({ quality: 80 })
@@ -62,7 +62,7 @@ const s3Service = new S3Service(process.env.AWS_BUCKET_NAME);
 
 module.exports = {
   S3Service,
-  uploadImage: (file, dni) => s3Service.uploadImage(file, dni),
+  uploadImage: (file, dni, prefix) => s3Service.uploadImage(file, dni, prefix),
   deleteFile: (fileName) => s3Service.deleteFile(fileName),
   deleteFiles: (fileNames) => s3Service.deleteFiles(fileNames),
 };

@@ -15,6 +15,7 @@ model Usuario {
   correo         String       @unique
   password       String       
   telefono       String       
+  profilePicture String       @default("")
   rol            String       @default("usuario")
   createdAt      DateTime     @default(now()) 
   Tiqueterias    Tiqueteria[] // No se especifica onDelete aquí

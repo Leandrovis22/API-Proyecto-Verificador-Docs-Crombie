@@ -16,6 +16,8 @@ router.get('/user', authenticateToken, userController.getUser);
 // Ruta para actualizar un usuario solo como admin
 router.put('/user', authenticateToken, actualizarUsuario); // Agregar respuesta de que ocurrio mal cuando campos ya existen en otro usuario
 
+router.put('/userImage', authenticateToken, userController.updateUserImage);
+
 // Ruta para obtener todos los usuarios como admin
 router.get('/users', authenticateToken, obtenerUsuarios);
 

@@ -274,6 +274,46 @@
 			"response": []
 		},
 		{
+			"name": "enviar foto perfil",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJyb2wiOiJhZG1pbiIsImlhdCI6MTczMjU4OTk1NCwiZXhwIjoxNzMyNTkxNzU0fQ.Tv0ftBukWTByOCLesAqlybKOjKOIDHT1AkcC6qEfaUY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "profilePicture",
+							"type": "file",
+							"src": "/C:/Users/leand/Downloads/fotos perfil/seleccionada/perfil - copia.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/userImage",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"userImage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "obtener imagen",
 			"request": {
 				"auth": {

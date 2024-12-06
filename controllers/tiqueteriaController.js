@@ -57,6 +57,8 @@ exports.Tiqueteria = async (req, res) => {
     }
 };
 
+
+
 exports.updateTicket = async (req, res) => {
     uploadMiddleware(req, res, async (err) => {
         if (err) {
@@ -114,3 +116,33 @@ exports.updateTicket = async (req, res) => {
         }
     });
 };
+
+
+exports.getUserByTicket = async (req, res) => {
+    const { ticketId } = req.params; 
+  
+    try {
+      const ticket = await prisma.tiqueteria.findUnique({
+        where: { id: parseInt(ticketId, 10) },
+        include: {
+          Usuario: true 
+        }
+      });
+  
+      if (!ticket) {
+        return res.status(404).json({ message: 'Ticket no encontrado' });
+      }
+  
+      const user = ticket.Usuario;
+  
+      if (!user) {
+        return res.status(404).json({ message: 'Usuario no encontrado para este ticket' });
+      }
+  
+      return res.json(user);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al obtener el usuario por ticket' });
+    }
+  };
+  

@@ -10,6 +10,7 @@ const Tiqueteria = require('../controllers/tiqueteriaController');
 const { sendResetPasswordEmail, resetPassword } = require('../controllers/forgotPass');
 const { actualizarUsuario, obtenerUsuarios } = require('../controllers/adminController');
 
+
 // Ruta para obtener datos del usuario actual
 router.get('/user', authenticateToken, userController.getUser);
 
@@ -44,4 +45,5 @@ router.get('/tiqueteria', authenticateToken, Tiqueteria.Tiqueteria);
 
 router.put('/ticket/:ticketId', authenticateToken, Tiqueteria.updateTicket);
 
+router.get('/tickets/:ticketId/user', Tiqueteria.getUserByTicket);
 module.exports = router;

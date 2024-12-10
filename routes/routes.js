@@ -19,6 +19,8 @@ router.put('/user', authenticateToken, actualizarUsuario); // Agregar respuesta 
 
 router.put('/userImage', authenticateToken, userController.updateUserImage);
 
+router.delete('/user/:userId', authenticateToken, userController.deleteUserImage);
+
 // Ruta para obtener todos los usuarios como admin
 router.get('/users', authenticateToken, obtenerUsuarios);
 

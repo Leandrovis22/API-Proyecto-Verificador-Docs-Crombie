@@ -17,6 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', routes);
 app.use('/auth', authRouter);
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
   console.log('Servidor corriendo en el puerto 3000');
 });

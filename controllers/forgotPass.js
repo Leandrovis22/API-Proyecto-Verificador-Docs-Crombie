@@ -10,12 +10,14 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "proccess.env.EMAIL",
-    pass: "proccess.env.EMAIL_PASSWORD",
+    user: "siproyecto0@gmail.com",
+    pass: "kioo oiss zrdn wqpm",
   },
 });
 
 exports.sendResetPasswordEmail = async (req, res) => {
+  console.log(process.env.EMAIL, process.env.EMAIL_PASSWORD);
+
   const { correo } = req.body;
 
   try {
